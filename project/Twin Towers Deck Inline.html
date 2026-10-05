@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Twin Towers App — Screen Deck</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0d1e40; font-family: Arial, Helvetica, sans-serif; }
+    deck-stage { --deck-bg: #0d1e40; }
+    section {
+      width: 1920px; height: 1080px;
+      background: #0d1e40;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+
+    /* Background glow */
+    .bg-glow {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Phone mockup wrapper */
+    .phone-wrap {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 32px;
+    }
+    .phone-frame {
+      width: 320px; height: 693px;
+      border-radius: 44px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.08),
+        0 0 0 9px #0a1628,
+        0 0 0 11px #2a3d6a,
+        0 40px 100px rgba(0,0,0,0.7);
+      position: relative;
+    }
+    .phone-frame img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      display: block;
+    }
+
+    /* Annotation panel */
+    .annotation {
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      z-index: 3;
+    }
+    .annotation.left  { left: 100px; width: 380px; text-align: right; }
+    .annotation.right { right: 100px; width: 380px; text-align: left; }
+
+    .screen-num {
+      font-size: 11px; font-weight: 800; letter-spacing: 3px;
+      color: #C9A84C; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .screen-title {
+      font-size: 40px; font-weight: 800; color: #fff;
+      line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 16px;
+    }
+    .screen-sub {
+      font-size: 15px; color: rgba(255,255,255,0.55);
+      line-height: 1.65; margin-bottom: 24px;
+    }
+    .feature-list { list-style: none; }
+    .feature-list li {
+      font-size: 13px; color: rgba(255,255,255,0.5);
+      padding: 5px 0;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .annotation.left .feature-list li { justify-content: flex-end; }
+    .feature-list li::before {
+      content: '';
+      width: 5px; height: 5px; border-radius: 50%;
+      background: #C9A84C; flex-shrink: 0;
+    }
+    .annotation.left .feature-list li::before { order: 2; }
+
+    .connector {
+      position: absolute; top: 50%;
+      height: 2px; background: linear-gradient(90deg, rgba(201,168,76,0), rgba(201,168,76,0.4));
+      pointer-events: none; z-index: 1;
+    }
+    .connector.left  { right: calc(50% - 160px); transform: translateY(-1px); left: 100px; }
+    .connector.right { left: calc(50% + 160px); transform: translateY(-1px); right: 100px; }
+
+    /* Title slide */
+    .title-slide {
+      flex-direction: column; gap: 0;
+      background: linear-gradient(160deg, #1B2D5B 0%, #0d1420 100%);
+    }
+    .title-logo-wrap {
+      width: 100px; height: 100px; border-radius: 28px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(201,168,76,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 32px;
+    }
+    .title-main { font-size: 72px; font-weight: 900; color: #fff; letter-spacing: -2px; margin-bottom: 8px; }
+    .title-sub  { font-size: 20px; color: rgba(255,255,255,0.45); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 48px; }
+    .title-pill {
+      background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 99px; padding: 8px 24px;
+      font-size: 13px; font-weight: 700; color: #C9A84C; letter-spacing: 1px;
+    }
+    .title-modules {
+      display: flex; gap: 12px; margin-top: 40px; flex-wrap: wrap; justify-content: center;
+    }
+    .module-chip {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 99px; padding: 8px 18px;
+      font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6);
+    }
+  </style>
+</head>
+<body>
+<script src="deck-stage.js"></script>
+
+<deck-stage>
+
+  <!-- 01: Title -->
+  <section class="title-slide" data-screen-label="01 Overview">
+    <div class="bg-glow" style="width:700px;height:700px;background:radial-gradient(circle,rgba(201,168,76,0.12) 0%,transparent 65%);top:-200px;left:50%;transform:translateX(-50%);"></div>
+    <div class="title-logo-wrap">
+      <svg width="60" height="63" viewBox="0 0 100 105" fill="none">
+        <rect x="4" y="6" width="92" height="8" rx="2" fill="#C9A84C"/>
+        <rect x="12" y="2" width="76" height="6" rx="1.5" fill="#C9A84C"/>
+        <rect x="12" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/>
+        <rect x="60" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/>
+        <rect x="44" y="14" width="12" height="76" rx="1.5" fill="#C9A84C"/>
+      </svg>
+    </div>
+    <div class="title-main">Twin Towers</div>
+    <div class="title-sub">Community App · by Namishree</div>
+    <div class="title-pill">Resident Experience Platform</div>
+    <div class="title-modules">
+      <span class="module-chip">🔧 Maintenance</span>
+      <span class="module-chip">📋 Issues</span>
+      <span class="module-chip">🎊 Events</span>
+      <span class="module-chip">📅 Bookings</span>
+      <span class="module-chip">🗳️ Polls</span>
+      <span class="module-chip">📜 Policies</span>
+      <span class="module-chip">👥 Members</span>
+      <span class="module-chip">🔔 Notifications</span>
+    </div>
+  </section>
+
+  <!-- 02: Login -->
+  <section data-screen-label="02 Login">
+    <div class="bg-glow" style="width:600px;height:600px;background:radial-gradient(circle,rgba(201,168,76,0.1) 0%,transparent 65%);top:-100px;left:-100px;"></div>
+    <div class="annotation left">
+      <div class="screen-num">Screen 01</div>
+      <div class="screen-title">Login & Authentication</div>
+      <div class="screen-sub">Secure OTP-based sign-in with branded landing experience.</div>
+      <ul class="feature-list">
+        <li>Mobile OTP authentication</li>
+        <li>Email login fallback</li>
+        <li>Community branding front and center</li>
+        <li>New resident registration</li>
+      </ul>
+    </div>
+    <div class="connector left"></div>
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="data:image/png;base64,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" alt="Login"/></div>
+    </div>
+  </section>
+
+  <!-- 03: Dashboard -->
+  <section data-screen-label="03 Dashboard">
+    <div class="bg-glow" style="width:500px;height:500px;background:radial-gradient(circle,rgba(201,168,76,0.08) 0%,transparent 65%);bottom:-100px;right:-100px;"></div>
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="data:image/png;base64,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" alt="Dashboard"/></div>
+    </div>
+    <div class="connector right"></div>
+    <div class="annotation right">
+      <div class="screen-num">Screen 02</div>
+      <div class="screen-title">Community Dashboard</div>
+      <div class="screen-sub">At-a-glance view of everything happening in your community.</div>
+      <ul class="feature-list">
+        <li>Personalised welcome & flat info</li>
+        <li>Live issue & poll summary</li>
+        <li>Upcoming event banner</li>
+        <li>7 quick-access service tiles</li>
+        <li>Recent issues feed</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 04: Maintenance -->
+  <section data-screen-label="04 Maintenance">
+    <div class="annotation left">
+      <div class="screen-num">Screen 03</div>
+      <div class="screen-title">Maintenance & Asset Records</div>
+      <div class="screen-sub">Full condition tracking across towers, clubhouse, parking and common areas.</div>
+      <ul class="feature-list">
+        <li>Status per asset: Good / Fair / Poor</li>
+        <li>Filter by Tower A, B, Clubhouse, Parking</li>
+        <li>Warranty expiry alerts</li>
+        <li>Full inspection history timeline</li>
+      </ul>
+    </div>
+    <div class="connector left"></div>
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYkAAADmCAMAAAAX1om0AAAAclBMVEX39vMbLVv////Z2dkNDBQXIUIZKlQOEB0THDcXI0YNDhcUHjoRFCUWIUAbLFgXIkMUHTgZJk0VHz0aK1YQEyMbLFoSGS8ZKFHi4uIXJUoODxkZKFD4+PgQEiERFCYaKVMRFScTGzMRFikYJUoUHDYVHjxsMVrdAAACtElEQVR4nO3cjU7iQBSA0WUdkRYQQUER8d/3f8XtUOtSVyHGJVzDOYmxTOIk5cvMFGP89Qto6RCDElEoEYUSUSgRhRJRKBGFElEoEYUSUSgRhRJRKBGFElEoEYUSUSgRhRJRKPFlF+ni3Ui3eHkpumsD5/PRcctofr5tWiW+LKXUGaY0bF4Pl2lledyMnI8up+2fmV6OtqXYUmJcptRfXRUpnVTZuyfNwCFaBcglzlLq1UPnt9XrwcND/nb/+m7PL4fXad31sHM53zL35hI5RP3GF3nCwWkOkVLx3Tv6ifKmtArQLnGfyv7d02TydHdWpvt6bDRth6hSdKajLfNvLHE6SLPXy1kquifluKhq5K/v3dSP9BagXWJxsXio3+3n6rIeO+6k9/Jg9/PJO1tKjMu8IVU7UlmcVFez1O9XK+R19NC0SvTeSuRVkW57vWp3emxGPikxvNs0/8YSRXocpHLclOjnEnlNHGyJ3kclFsvVbj1aLpqRXZSoT4e8LOoSq4NDiVaJf31cYvqN3amojol8OryWqM6KHOe5PNhzogpw9vdizWSy/ur/n9jjMj8t5RVQnd1F3SQf3gf5GLupxCSl9RQ7eIqd5WlmOUF/7Sn2IDenr5TYwSe7aik0G1R/dWDkEge5N9WfJ1af7N4u1rR3J7/t+NGUiEKJKJSIQokolIhCiSiUiEKJKJSIQokolIhi3/8iAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHbgNzEoEYUSUSgRhRJRKBGFElEoEUWcEjdXR3twdbPv+27EKbGXEFWKfd93I06J/YQ4Otr3fTfilLAmonBOEIMSUSgRhRJRKBGFElEoEYUSUSgRhRJRKBGFElHs+w/fIJo/TzOmWYMgHe8AAAAASUVORK5CYII=" alt="Maintenance"/></div>
+    </div>
+  </section>
+
+  <!-- 05: Issues -->
+  <section data-screen-label="05 Issues">
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="data:image/png;base64,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" alt="Issues"/></div>
+    </div>
+    <div class="connector right"></div>
+    <div class="annotation right">
+      <div class="screen-num">Screen 04</div>
+      <div class="screen-title">Issues & Tracking</div>
+      <div class="screen-sub">Community-wide ticketing system with full lifecycle management.</div>
+      <ul class="feature-list">
+        <li>Raise issues with photos</li>
+        <li>Filter by status & priority</li>
+        <li>SLA due dates & assignments</li>
+        <li>Comment thread on each ticket</li>
+        <li>High / Medium / Low priority</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 06: Cultural -->
+  <section data-screen-label="06 Cultural">
+    <div class="annotation left">
+      <div class="screen-num">Screen 05</div>
+      <div class="screen-title">Cultural Activities</div>
+      <div class="screen-sub">Events, festival proposals and photo gallery all in one place.</div>
+      <ul class="feature-list">
+        <li>Upcoming events with registration</li>
+        <li>Resident event proposals</li>
+        <li>Budget voting & approval flow</li>
+        <li>Photo gallery by event</li>
+      </ul>
+    </div>
+    <div class="connector left"></div>
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYkAAADmCAMAAAAX1om0AAAAclBMVEX39vMbLVv////Z2dkNDBQXIUIZKlQOEB0THDcXI0YNDhcUHjoRFCUWIUAbLFgXIkMUHTgZJk0VHz0aK1YQEyMbLFoSGS8ZKFHi4uIXJUoODxkZKFD4+PgQEiERFCYaKVMRFScTGzMRFikYJUoUHDYVHjxsMVrdAAACtElEQVR4nO3cjU7iQBSA0WUdkRYQQUER8d/3f8XtUOtSVyHGJVzDOYmxTOIk5cvMFGP89Qto6RCDElEoEYUSUSgRhRJRKBGFElEoEYUSUSgRhRJRKBGFElEoEYUSUSgRhRJRKPFlF+ni3Ui3eHkpumsD5/PRcctofr5tWiW+LKXUGaY0bF4Pl2lledyMnI8up+2fmV6OtqXYUmJcptRfXRUpnVTZuyfNwCFaBcglzlLq1UPnt9XrwcND/nb/+m7PL4fXad31sHM53zL35hI5RP3GF3nCwWkOkVLx3Tv6ifKmtArQLnGfyv7d02TydHdWpvt6bDRth6hSdKajLfNvLHE6SLPXy1kquifluKhq5K/v3dSP9BagXWJxsXio3+3n6rIeO+6k9/Jg9/PJO1tKjMu8IVU7UlmcVFez1O9XK+R19NC0SvTeSuRVkW57vWp3emxGPikxvNs0/8YSRXocpHLclOjnEnlNHGyJ3kclFsvVbj1aLpqRXZSoT4e8LOoSq4NDiVaJf31cYvqN3amojol8OryWqM6KHOe5PNhzogpw9vdizWSy/ur/n9jjMj8t5RVQnd1F3SQf3gf5GLupxCSl9RQ7eIqd5WlmOUF/7Sn2IDenr5TYwSe7aik0G1R/dWDkEge5N9WfJ1af7N4u1rR3J7/t+NGUiEKJKJSIQokolIhCiSiUiEKJKJSIQokolIhi3/8iAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHbgNzEoEYUSUSgRhRJRKBGFElEoEUWcEjdXR3twdbPv+27EKbGXEFWKfd93I06J/YQ4Otr3fTfilLAmonBOEIMSUSgRhRJRKBGFElEoEYUSUSgRhRJRKBGFElHs+w/fIJo/TzOmWYMgHe8AAAAASUVORK5CYII=" alt="Cultural"/></div>
+    </div>
+  </section>
+
+  <!-- 07: Booking -->
+  <section data-screen-label="07 Booking">
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="data:image/png;base64,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" alt="Booking"/></div>
+    </div>
+    <div class="connector right"></div>
+    <div class="annotation right">
+      <div class="screen-num">Screen 06</div>
+      <div class="screen-title">Facility Slot Booking</div>
+      <div class="screen-sub">Self-service booking for all community amenities.</div>
+      <ul class="feature-list">
+        <li>Badminton courts, lawn, banquet hall</li>
+        <li>7-day date picker</li>
+        <li>Live availability grid</li>
+        <li>Booking confirmation with ID</li>
+        <li>Max 2 active bookings per flat</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 08: Policies -->
+  <section data-screen-label="08 Policies">
+    <div class="annotation left">
+      <div class="screen-num">Screen 07</div>
+      <div class="screen-title">Policies & Rules</div>
+      <div class="screen-sub">Official community guidelines — clear, accessible and always up to date.</div>
+      <ul class="feature-list">
+        <li>Pool, parking, noise, clubhouse rules</li>
+        <li>Numbered, readable format</li>
+        <li>Full by-laws PDF download</li>
+        <li>Updated after AGM or polls</li>
+      </ul>
+    </div>
+    <div class="connector left"></div>
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYkAAADmCAMAAAAX1om0AAAAclBMVEX39vMbLVv////Z2dkNDBQXIUIZKlQOEB0THDcXI0YNDhcUHjoRFCUWIUAbLFgXIkMUHTgZJk0VHz0aK1YQEyMbLFoSGS8ZKFHi4uIXJUoODxkZKFD4+PgQEiERFCYaKVMRFScTGzMRFikYJUoUHDYVHjxsMVrdAAACtElEQVR4nO3cjU7iQBSA0WUdkRYQQUER8d/3f8XtUOtSVyHGJVzDOYmxTOIk5cvMFGP89Qto6RCDElEoEYUSUSgRhRJRKBGFElEoEYUSUSgRhRJRKBGFElEoEYUSUSgRhRJRKPFlF+ni3Ui3eHkpumsD5/PRcctofr5tWiW+LKXUGaY0bF4Pl2lledyMnI8up+2fmV6OtqXYUmJcptRfXRUpnVTZuyfNwCFaBcglzlLq1UPnt9XrwcND/nb/+m7PL4fXad31sHM53zL35hI5RP3GF3nCwWkOkVLx3Tv6ifKmtArQLnGfyv7d02TydHdWpvt6bDRth6hSdKajLfNvLHE6SLPXy1kquifluKhq5K/v3dSP9BagXWJxsXio3+3n6rIeO+6k9/Jg9/PJO1tKjMu8IVU7UlmcVFez1O9XK+R19NC0SvTeSuRVkW57vWp3emxGPikxvNs0/8YSRXocpHLclOjnEnlNHGyJ3kclFsvVbj1aLpqRXZSoT4e8LOoSq4NDiVaJf31cYvqN3amojol8OryWqM6KHOe5PNhzogpw9vdizWSy/ur/n9jjMj8t5RVQnd1F3SQf3gf5GLupxCSl9RQ7eIqd5WlmOUF/7Sn2IDenr5TYwSe7aik0G1R/dWDkEge5N9WfJ1af7N4u1rR3J7/t+NGUiEKJKJSIQokolIhCiSiUiEKJKJSIQokolIhi3/8iAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHbgNzEoEYUSUSgRhRJRKBGFElEoEUWcEjdXR3twdbPv+27EKbGXEFWKfd93I06J/YQ4Otr3fTfilLAmonBOEIMSUSgRhRJRKBGFElEoEYUSUSgRhRJRKBGFElHs+w/fIJo/TzOmWYMgHe8AAAAASUVORK5CYII=" alt="Policies"/></div>
+    </div>
+  </section>
+
+  <!-- 09: Polls -->
+  <section data-screen-label="09 Polls">
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="data:image/png;base64,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" alt="Polls"/></div>
+    </div>
+    <div class="connector right"></div>
+    <div class="annotation right">
+      <div class="screen-num">Screen 08</div>
+      <div class="screen-title">Polls & Voting</div>
+      <div class="screen-sub">Democratic decision-making for the entire community.</div>
+      <ul class="feature-list">
+        <li>Elections, budgets, policy decisions</li>
+        <li>Anonymous voting</li>
+        <li>Live animated result bars</li>
+        <li>Participation tracking</li>
+        <li>Active / upcoming / closed states</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 10: Members -->
+  <section data-screen-label="10 Members">
+    <div class="annotation left">
+      <div class="screen-num">Screen 09</div>
+      <div class="screen-title">Core Committee</div>
+      <div class="screen-sub">Full directory of RWA members with direct contact actions.</div>
+      <ul class="feature-list">
+        <li>8 committee profiles</li>
+        <li>Filter by team / area</li>
+        <li>Call, WhatsApp, Email in one tap</li>
+        <li>Responsibilities listed per member</li>
+      </ul>
+    </div>
+    <div class="connector left"></div>
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="data:image/png;base64,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" alt="Members"/></div>
+    </div>
+  </section>
+
+  <!-- 11: Notifications -->
+  <section data-screen-label="11 Notifications">
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYkAAADmCAMAAAAX1om0AAAAclBMVEX39vMbLVv////Z2dkNDBQXIUIZKlQOEB0THDcXI0YNDhcUHjoRFCUWIUAbLFgXIkMUHTgZJk0VHz0aK1YQEyMbLFoSGS8ZKFHi4uIXJUoODxkZKFD4+PgQEiERFCYaKVMRFScTGzMRFikYJUoUHDYVHjxsMVrdAAACtElEQVR4nO3cjU7iQBSA0WUdkRYQQUER8d/3f8XtUOtSVyHGJVzDOYmxTOIk5cvMFGP89Qto6RCDElEoEYUSUSgRhRJRKBGFElEoEYUSUSgRhRJRKBGFElEoEYUSUSgRhRJRKPFlF+ni3Ui3eHkpumsD5/PRcctofr5tWiW+LKXUGaY0bF4Pl2lledyMnI8up+2fmV6OtqXYUmJcptRfXRUpnVTZuyfNwCFaBcglzlLq1UPnt9XrwcND/nb/+m7PL4fXad31sHM53zL35hI5RP3GF3nCwWkOkVLx3Tv6ifKmtArQLnGfyv7d02TydHdWpvt6bDRth6hSdKajLfNvLHE6SLPXy1kquifluKhq5K/v3dSP9BagXWJxsXio3+3n6rIeO+6k9/Jg9/PJO1tKjMu8IVU7UlmcVFez1O9XK+R19NC0SvTeSuRVkW57vWp3emxGPikxvNs0/8YSRXocpHLclOjnEnlNHGyJ3kclFsvVbj1aLpqRXZSoT4e8LOoSq4NDiVaJf31cYvqN3amojol8OryWqM6KHOe5PNhzogpw9vdizWSy/ur/n9jjMj8t5RVQnd1F3SQf3gf5GLupxCSl9RQ7eIqd5WlmOUF/7Sn2IDenr5TYwSe7aik0G1R/dWDkEge5N9WfJ1af7N4u1rR3J7/t+NGUiEKJKJSIQokolIhCiSiUiEKJKJSIQokolIhi3/8iAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHbgNzEoEYUSUSgRhRJRKBGFElEoEUWcEjdXR3twdbPv+27EKbGXEFWKfd93I06J/YQ4Otr3fTfilLAmonBOEIMSUSgRhRJRKBGFElEoEYUSUSgRhRJRKBGFElHs+w/fIJo/TzOmWYMgHe8AAAAASUVORK5CYII=" alt="Notifications"/></div>
+    </div>
+    <div class="connector right"></div>
+    <div class="annotation right">
+      <div class="screen-num">Screen 10</div>
+      <div class="screen-title">Notifications</div>
+      <div class="screen-sub">Stay informed on everything that matters in your community.</div>
+      <ul class="feature-list">
+        <li>Issue updates & status changes</li>
+        <li>Booking confirmations</li>
+        <li>New polls & event announcements</li>
+        <li>Grouped new / earlier</li>
+        <li>Mark all read in one tap</li>
+      </ul>
+    </div>
+  </section>
+
+</deck-stage>
+
+<script type="application/json" id="speaker-notes">
+[
+  "Welcome to Twin Towers by Namishree — a full-featured resident community app.",
+  "The login screen uses mobile OTP for secure, frictionless sign-in with the community brand front and center.",
+  "The dashboard gives every resident a personalised view — open issues, active polls, upcoming events, and quick access to all 7 modules.",
+  "Maintenance tracks the condition of every asset across Tower A, Tower B, the Clubhouse, Common Areas, and all 3 parking basements.",
+  "The Issues module is a full ticketing system — residents raise issues, task members update status, and everyone can track progress in real time.",
+  "Cultural Activities covers upcoming events, festival proposals with budget voting, and an album gallery of past celebrations.",
+  "Slot Booking lets residents self-serve for badminton courts, the lawn, banquet hall and club house rooms — with a 7-day availability grid.",
+  "Policies keeps all community rules accessible and up to date — pool timings, parking rules, noise guidelines, and the full PDF by-laws.",
+  "Polls enables democratic decision-making — from committee elections to CCTV investments and festival budgets. Fully anonymous.",
+  "The Core Committee directory gives every resident direct access to the right person — call, WhatsApp, or email in one tap.",
+  "Notifications keeps residents informed on everything — issue updates, booking confirmations, new polls, and community announcements."
+]
+</script>
+</body>
+</html>

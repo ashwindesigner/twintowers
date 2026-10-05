@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Twin Towers App — Presentation Deck</title>
+<style>
+  :root {
+    --gold: #C9A84C; --navy: #1B2D5B;
+    --bg: #F7F6F3; --surface: #fff;
+    --text1: #0D0C14; --text2: #58576A; --text3: #A09FB0;
+    --success: #10B981; --warning: #F59E0B; --danger: #EF4444;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0d1e40; font-family: Arial, Helvetica, sans-serif; }
+  deck-stage { --deck-bg: #0d1e40; }
+  section {
+    width: 1920px; height: 1080px; background: #0d1e40;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .glow {
+    position: absolute; border-radius: 50%; pointer-events: none;
+  }
+
+  /* ── Phone mockup ─────────────────── */
+  .phone {
+    width: 300px; height: 648px; border-radius: 44px;
+    overflow: hidden; position: relative; flex-shrink: 0;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 0 0 9px #0a1628,
+      0 0 0 11px #2a3d6a, 0 40px 90px rgba(0,0,0,0.65);
+    display: flex; flex-direction: column; background: var(--bg);
+  }
+  .sbar {
+    background: var(--navy); padding: 12px 20px 8px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-shrink: 0; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.9);
+  }
+  .sbar.light { background: #fff; color: var(--text1); border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .di { /* dynamic island */
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    width: 80px; height: 22px; background: #000; border-radius: 12px; z-index: 10;
+  }
+  .app-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+  .home-ind {
+    height: 22px; background: #fff; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .home-ind-bar { width: 80px; height: 4px; background: rgba(0,0,0,0.15); border-radius: 99px; }
+
+  /* ── Annotation panel ─────────────── */
+  .anno {
+    position: absolute; z-index: 3; width: 400px;
+  }
+  .anno.L { left: 100px; text-align: right; }
+  .anno.R { right: 100px; text-align: left; }
+  .anno .num { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 10px; }
+  .anno .ttl { font-size: 38px; font-weight: 900; color: #fff; line-height: 1.12; letter-spacing: -1px; margin-bottom: 14px; }
+  .anno .sub { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.65; margin-bottom: 20px; }
+  .anno ul { list-style: none; }
+  .anno ul li { font-size: 12px; color: rgba(255,255,255,0.45); padding: 4px 0; display: flex; align-items: center; gap: 7px; }
+  .anno.R ul li { justify-content: flex-start; }
+  .anno.L ul li { justify-content: flex-end; }
+  .anno ul li::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--gold); flex-shrink:0; }
+  .anno.L ul li::before { order: 2; }
+  .conn {
+    position: absolute; top: 50%; height: 1px; z-index: 1;
+    background: linear-gradient(90deg, rgba(201,168,76,0), rgba(201,168,76,0.3));
+  }
+  .conn.L { left: 500px; right: calc(50% - 150px); transform: translateY(-1px); }
+  .conn.R { left: calc(50% + 150px); right: 500px; transform: translateY(-1px); }
+
+  /* ── Title slide ──────────────────── */
+  .title-s { flex-direction: column; gap: 0; background: linear-gradient(160deg, #1B2D5B 0%, #090f1e 100%); }
+
+  /* ── Component primitives ─────────── */
+  .card { background: #fff; border-radius: 14px; overflow: hidden; }
+  .chip { border-radius: 99px; padding: 3px 9px; font-size: 10px; font-weight: 700; display: inline-block; }
+  .chip.good { color: #10B981; background: #ECFDF5; }
+  .chip.fair { color: #F59E0B; background: #FFFBEB; }
+  .chip.poor { color: #EF4444; background: #FEF2F2; }
+  .chip.navy { color: #fff; background: var(--navy); }
+  .chip.gold { color: var(--navy); background: var(--gold); }
+  .chip.open { color: #EF4444; background: #FEF2F2; }
+  .chip.prog { color: #F59E0B; background: #FFFBEB; }
+  .chip.res  { color: #10B981; background: #ECFDF5; }
+  .chip.hi   { color: #EF4444; background: #FEF2F2; }
+  .chip.med  { color: #F59E0B; background: #FFFBEB; }
+  .chip.lo   { color: #10B981; background: #ECFDF5; }
+  .chip.live { color: #10B981; background: #ECFDF5; }
+  .chip.closed { color: #A09FB0; background: #F2F1EE; }
+</style>
+</head>
+<body>
+<script src="deck-stage.js"></script>
+<deck-stage>
+
+<!-- ═══════════════ SLIDE 1: TITLE ═══════════════ -->
+<section class="title-s" data-screen-label="01 Title">
+  <div class="glow" style="width:700px;height:700px;background:radial-gradient(circle,rgba(201,168,76,0.13)0%,transparent 65%);top:-250px;left:50%;transform:translateX(-50%);"></div>
+  <svg width="90" height="94" viewBox="0 0 100 105" fill="none" style="margin-bottom:28px">
+    <rect x="4" y="6" width="92" height="8" rx="2" fill="#C9A84C"/>
+    <rect x="12" y="2" width="76" height="6" rx="1.5" fill="#C9A84C"/>
+    <rect x="12" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/>
+    <rect x="60" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/>
+    <rect x="44" y="14" width="12" height="76" rx="1.5" fill="#C9A84C"/>
+  </svg>
+  <div style="font-size:68px;font-weight:900;color:#fff;letter-spacing:-2px;margin-bottom:6px">Twin Towers</div>
+  <div style="font-size:18px;color:rgba(255,255,255,0.4);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px">Community App · by Namishree</div>
+  <div style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);border-radius:99px;padding:9px 26px;font-size:13px;font-weight:700;color:#C9A84C;letter-spacing:1px;margin-bottom:40px">Resident Experience Platform — 10 Screens</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:800px">
+    <span class="chip navy" style="font-size:12px;padding:7px 16px">🔧 Maintenance</span>
+    <span class="chip navy" style="font-size:12px;padding:7px 16px">📋 Issues</span>
+    <span class="chip navy" style="font-size:12px;padding:7px 16px">🎊 Events</span>
+    <span class="chip navy" style="font-size:12px;padding:7px 16px">📅 Bookings</span>
+    <span class="chip navy" style="font-size:12px;padding:7px 16px">🗳️ Polls</span>
+    <span class="chip navy" style="font-size:12px;padding:7px 16px">📜 Policies</span>
+    <span class="chip navy" style="font-size:12px;padding:7px 16px">👥 Members</span>
+    <span class="chip navy" style="font-size:12px;padding:7px 16px">🔔 Notifications</span>
+  </div>
+</section>
+
+<!-- ═══════════════ SLIDE 2: LOGIN ═══════════════ -->
+<section data-screen-label="02 Login">
+  <div class="glow" style="width:600px;height:600px;background:radial-gradient(circle,rgba(201,168,76,0.1)0%,transparent 65%);top:-150px;left:-50px;"></div>
+  <div class="anno L" style="top:50%;transform:translateY(-50%)">
+    <div class="num">Screen 01</div>
+    <div class="ttl">Login &amp; Auth</div>
+    <div class="sub">Secure OTP sign-in with branded community landing.</div>
+    <ul>
+      <li>Mobile number + OTP</li>
+      <li>Email login fallback</li>
+      <li>New resident registration</li>
+      <li>Branded logo hero treatment</li>
+    </ul>
+  </div>
+  <div class="conn L"></div>
+  <!-- Phone -->
+  <div class="phone">
+    <div class="di"></div>
+    <div class="sbar">
+      <span>9:41</span>
+      <span style="display:flex;gap:4px;align-items:center">▌▌▌ ▾ ▮</span>
+    </div>
+    <div class="app-body" style="background:linear-gradient(180deg,var(--navy) 50%,var(--bg) 50%)">
+      <!-- Hero -->
+      <div style="background:var(--navy);padding:20px 16px 28px;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative">
+        <div style="width:70px;height:70px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:6px">
+          <svg width="38" height="40" viewBox="0 0 100 105" fill="none"><rect x="4" y="6" width="92" height="8" rx="2" fill="#C9A84C"/><rect x="12" y="2" width="76" height="6" rx="1.5" fill="#C9A84C"/><rect x="12" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/><rect x="60" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/><rect x="44" y="14" width="12" height="76" rx="1.5" fill="#C9A84C"/></svg>
+        </div>
+        <div style="font-size:18px;font-weight:900;color:var(--gold);letter-spacing:4px">TWIN TOWERS</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:1px">by Namishree · Your Community, Connected.</div>
+      </div>
+      <!-- Card -->
+      <div style="background:#fff;flex:1;border-radius:24px 24px 0 0;margin-top:-16px;padding:22px 18px 16px;box-shadow:0 -8px 40px rgba(0,0,0,0.15)">
+        <div style="font-size:18px;font-weight:800;color:var(--text1);margin-bottom:4px">Welcome back</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:18px">Sign in with your registered mobile number</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <div style="background:#F2F1EE;border-radius:12px;padding:10px 12px;font-size:12px;font-weight:700;color:var(--text1);flex-shrink:0">🇮🇳 +91</div>
+          <div style="flex:1;background:#F2F1EE;border-radius:12px;padding:10px 12px;font-size:12px;color:var(--text3)">98xxxxxxxx</div>
+        </div>
+        <div style="background:var(--gold);border-radius:12px;padding:13px;text-align:center;font-size:13px;font-weight:800;color:#fff;margin-bottom:14px;box-shadow:0 4px 16px rgba(201,168,76,0.35)">Continue →</div>
+        <div style="text-align:center;font-size:11px;color:var(--text3);margin-bottom:10px">— or —</div>
+        <div style="border:1.5px solid rgba(0,0,0,0.07);border-radius:12px;padding:11px;text-align:center;font-size:12px;font-weight:700;color:var(--navy)">Continue with Email</div>
+        <div style="text-align:center;font-size:10px;color:var(--text3);margin-top:14px">New resident? <span style="color:var(--gold);font-weight:700">Register here</span></div>
+      </div>
+    </div>
+    <div class="home-ind"><div class="home-ind-bar"></div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ SLIDE 3: DASHBOARD ═══════════════ -->
+<section data-screen-label="03 Dashboard">
+  <div class="glow" style="width:500px;height:500px;background:radial-gradient(circle,rgba(201,168,76,0.08)0%,transparent 65%);bottom:-100px;right:-80px;"></div>
+  <div class="phone">
+    <div class="di"></div>
+    <div class="sbar">
+      <span>9:41</span><span>▌▌▌ ▾ ▮</span>
+    </div>
+    <div class="app-body" style="overflow-y:auto">
+      <!-- Header -->
+      <div style="background:var(--navy);padding:10px 14px 18px;border-radius:0 0 22px 22px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center">
+              <svg width="18" height="19" viewBox="0 0 100 105" fill="none"><rect x="4" y="6" width="92" height="8" rx="2" fill="#C9A84C"/><rect x="12" y="2" width="76" height="6" rx="1.5" fill="#C9A84C"/><rect x="12" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/><rect x="60" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/><rect x="44" y="14" width="12" height="76" rx="1.5" fill="#C9A84C"/></svg>
+            </div>
+            <div><div style="font-size:13px;font-weight:800;color:var(--gold);letter-spacing:0.5px">Twin Towers</div><div style="font-size:9px;color:rgba(255,255,255,0.4);letter-spacing:0.8px">by Namishree</div></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="width:30px;height:30px;border-radius:10px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:14px;position:relative">🔔<span style="position:absolute;top:4px;right:4px;width:10px;height:10px;border-radius:50%;background:var(--gold);border:1.5px solid var(--navy);font-size:6px;font-weight:800;color:var(--navy);display:flex;align-items:center;justify-content:center">2</span></div>
+            <div style="width:30px;height:30px;border-radius:10px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--navy)">RS</div>
+          </div>
+        </div>
+        <div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:2px">Good morning, Ravi 👋</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-bottom:12px">A-302 · Tower A</div>
+        <div style="display:flex;background:rgba(255,255,255,0.08);border-radius:12px;padding:10px 0">
+          <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:800;color:#fff">2</div><div style="font-size:8px;color:rgba(255,255,255,0.5);font-weight:600">My Issues</div></div>
+          <div style="width:1px;background:rgba(255,255,255,0.12)"></div>
+          <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:800;color:#fff">2</div><div style="font-size:8px;color:rgba(255,255,255,0.5);font-weight:600">Active Polls</div></div>
+          <div style="width:1px;background:rgba(255,255,255,0.12)"></div>
+          <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:800;color:#fff">1</div><div style="font-size:8px;color:rgba(255,255,255,0.5);font-weight:600">Bookings</div></div>
+        </div>
+      </div>
+      <!-- Event banner -->
+      <div style="margin:12px 12px 0;background:linear-gradient(135deg,#1B3A6B,#0d1e40);border-radius:16px;padding:14px;border:1px solid rgba(201,168,76,0.2);position:relative;overflow:hidden">
+        <div style="font-size:8px;font-weight:800;color:var(--gold);letter-spacing:1.5px;margin-bottom:4px">UPCOMING EVENT</div>
+        <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:4px">Monthly Community Meetup</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.5)">📅 2026-05-04 · 📍 Banquet Hall</div>
+      </div>
+      <!-- Grid -->
+      <div style="padding:12px 12px 0">
+        <div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.3px;margin-bottom:8px">COMMUNITY SERVICES</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          
+          <div style="background:#fff;border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.06)">
+            <div style="font-size:22px;margin-bottom:4px">🔧</div>
+            <div style="font-size:10px;font-weight:800;color:var(--text1)">Maintenance</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:1px">10 tracked</div>
+          </div>
+          <div style="background:#fff;border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.06)">
+            <div style="font-size:22px;margin-bottom:4px">🎊</div>
+            <div style="font-size:10px;font-weight:800;color:var(--text1)">Events</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:1px">3 upcoming</div>
+          </div>
+          <div style="background:#fff;border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.06)">
+            <div style="font-size:22px;margin-bottom:4px">📋</div>
+            <div style="font-size:10px;font-weight:800;color:var(--text1)">Issues</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:1px">5 open</div>
+          </div>
+          <div style="background:#fff;border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.06)">
+            <div style="font-size:22px;margin-bottom:4px">🏸</div>
+            <div style="font-size:10px;font-weight:800;color:var(--text1)">Book</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:1px">5 facilities</div>
+          </div>
+          <div style="background:#fff;border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.06)">
+            <div style="font-size:22px;margin-bottom:4px">📜</div>
+            <div style="font-size:10px;font-weight:800;color:var(--text1)">Policies</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:1px">5 categories</div>
+          </div>
+          <div style="background:#fff;border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.06)">
+            <div style="font-size:22px;margin-bottom:4px">🗳️</div>
+            <div style="font-size:10px;font-weight:800;color:var(--text1)">Polls</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:1px">2 active</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="home-ind"><div class="home-ind-bar"></div></div>
+  </div>
+  <div class="conn R"></div>
+  <div class="anno R" style="top:50%;transform:translateY(-50%)">
+    <div class="num">Screen 02</div>
+    <div class="ttl">Community Dashboard</div>
+    <div class="sub">Personalised home with everything at a glance.</div>
+    <ul>
+      <li>Flat info + live stats strip</li>
+      <li>Upcoming event hero banner</li>
+      <li>7 quick-access service tiles</li>
+      <li>Recent issues feed</li>
+      <li>Notification badge on bell</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════ SLIDE 4: MAINTENANCE ═══════════════ -->
+<section data-screen-label="04 Maintenance">
+  <div class="anno L" style="top:50%;transform:translateY(-50%)">
+    <div class="num">Screen 03</div>
+    <div class="ttl">Maintenance &amp; Assets</div>
+    <div class="sub">Condition tracking across all towers, clubhouse and parking.</div>
+    <ul>
+      <li>Status: Good / Fair / Poor per asset</li>
+      <li>Category tabs with filter</li>
+      <li>Warranty expiry alerts</li>
+      <li>Full inspection history timeline</li>
+      <li>Left color-accent by status</li>
+    </ul>
+  </div>
+  <div class="conn L"></div>
+  <div class="phone">
+    <div class="di"></div>
+    <div class="sbar light"><span style="color:#0D0C14">9:41</span><span style="color:#0D0C14">▌▌▌ ▾ ▮</span></div>
+    <div class="app-body">
+      <!-- Header -->
+      <div style="background:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,0,0,0.06)">
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="width:30px;height:30px;border-radius:10px;background:#F2F1EE;display:flex;align-items:center;justify-content:center">←</div>
+          <div style="font-size:15px;font-weight:800;color:var(--text1)">Maintenance</div>
+        </div>
+        <div style="width:30px;height:30px;border-radius:10px;background:#F2F1EE;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text2)">ⓘ</div>
+      </div>
+      <!-- Summary -->
+      <div style="background:#fff;display:flex;border-bottom:1px solid rgba(0,0,0,0.06)">
+        
+        <div style="flex:1;padding:10px;text-align:center">
+          <div style="width:38px;height:38px;border-radius:12px;background:#ECFDF5;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#10B981">5</div>
+          <div style="font-size:9px;font-weight:700;color:var(--text3)">Good</div>
+        </div>
+        <div style="flex:1;padding:10px;text-align:center">
+          <div style="width:38px;height:38px;border-radius:12px;background:#FFFBEB;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#F59E0B">3</div>
+          <div style="font-size:9px;font-weight:700;color:var(--text3)">Fair</div>
+        </div>
+        <div style="flex:1;padding:10px;text-align:center">
+          <div style="width:38px;height:38px;border-radius:12px;background:#FEF2F2;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#EF4444">2</div>
+          <div style="font-size:9px;font-weight:700;color:var(--text3)">Poor</div>
+        </div>
+      </div>
+      <!-- Tabs -->
+      <div style="display:flex;gap:5px;padding:8px 12px;background:#fff;border-bottom:1px solid rgba(0,0,0,0.06);overflow:hidden">
+        <div style="flex-shrink:0;font-size:10px;font-weight:700;border-radius:99px;padding:5px 10px;background:var(--navy);color:#fff">All</div><div style="flex-shrink:0;font-size:10px;font-weight:700;border-radius:99px;padding:5px 10px;background:#F2F1EE;color:var(--text3)">Tower A</div><div style="flex-shrink:0;font-size:10px;font-weight:700;border-radius:99px;padding:5px 10px;background:#F2F1EE;color:var(--text3)">Tower B</div><div style="flex-shrink:0;font-size:10px;font-weight:700;border-radius:99px;padding:5px 10px;background:#F2F1EE;color:var(--text3)">Clubhouse</div>
+      </div>
+      <!-- Cards -->
+      <div style="flex:1;overflow:hidden;padding:8px 12px;display:flex;flex-direction:column;gap:7px">
+        
+        <div style="background:#fff;border-radius:13px;display:flex;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:4px;background:#10B981;flex-shrink:0"></div>
+          <div style="flex:1;padding:9px 10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+              <span style="font-size:8px;font-weight:700;color:var(--gold);text-transform:uppercase">Tower A · Lift</span>
+              <span style="font-size:9px;font-weight:700;color:#10B981;background:#10B98118;border-radius:99px;padding:2px 7px">Good</span>
+            </div>
+            <div style="font-size:11px;font-weight:800;color:var(--text1);margin-bottom:5px">Tower A Lift</div>
+            <div style="display:flex;gap:5px">
+              <span style="font-size:9px;color:var(--text3);background:#F2F1EE;border-radius:99px;padding:2px 7px">👤 Kavitha S.</span>
+              <span style="font-size:9px;color:var(--text3);background:#F2F1EE;border-radius:99px;padding:2px 7px">📅 2026-05-01</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;padding-right:8px;color:var(--text3);font-size:14px">›</div>
+        </div>
+        <div style="background:#fff;border-radius:13px;display:flex;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:4px;background:#F59E0B;flex-shrink:0"></div>
+          <div style="flex:1;padding:9px 10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+              <span style="font-size:8px;font-weight:700;color:var(--gold);text-transform:uppercase">Tower A · Lights</span>
+              <span style="font-size:9px;font-weight:700;color:#F59E0B;background:#F59E0B18;border-radius:99px;padding:2px 7px">Fair</span>
+            </div>
+            <div style="font-size:11px;font-weight:800;color:var(--text1);margin-bottom:5px">Corridor Lights</div>
+            <div style="display:flex;gap:5px">
+              <span style="font-size:9px;color:var(--text3);background:#F2F1EE;border-radius:99px;padding:2px 7px">👤 Kavitha S.</span>
+              <span style="font-size:9px;color:var(--text3);background:#F2F1EE;border-radius:99px;padding:2px 7px">📅 2026-05-22</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;padding-right:8px;color:var(--text3);font-size:14px">›</div>
+        </div>
+        <div style="background:#fff;border-radius:13px;display:flex;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:4px;background:#EF4444;flex-shrink:0"></div>
+          <div style="flex:1;padding:9px 10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+              <span style="font-size:8px;font-weight:700;color:var(--gold);text-transform:uppercase">Clubhouse · Gym</span>
+              <span style="font-size:9px;font-weight:700;color:#EF4444;background:#EF444418;border-radius:99px;padding:2px 7px">Poor</span>
+            </div>
+            <div style="font-size:11px;font-weight:800;color:var(--text1);margin-bottom:5px">Gym Equipment</div>
+            <div style="display:flex;gap:5px">
+              <span style="font-size:9px;color:var(--text3);background:#F2F1EE;border-radius:99px;padding:2px 7px">👤 Srinivas R.</span>
+              <span style="font-size:9px;color:var(--text3);background:#F2F1EE;border-radius:99px;padding:2px 7px">📅 2026-04-28</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;padding-right:8px;color:var(--text3);font-size:14px">›</div>
+        </div>
+        <div style="background:#fff;border-radius:13px;display:flex;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:4px;background:#EF4444;flex-shrink:0"></div>
+          <div style="flex:1;padding:9px 10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+              <span style="font-size:8px;font-weight:700;color:var(--gold);text-transform:uppercase">Parking · B2 Lights</span>
+              <span style="font-size:9px;font-weight:700;color:#EF4444;background:#EF444418;border-radius:99px;padding:2px 7px">Poor</span>
+            </div>
+            <div style="font-size:11px;font-weight:800;color:var(--text1);margin-bottom:5px">Basement 2 Lights</div>
+            <div style="display:flex;gap:5px">
+              <span style="font-size:9px;color:var(--text3);background:#F2F1EE;border-radius:99px;padding:2px 7px">👤 Kavitha S.</span>
+              <span style="font-size:9px;color:var(--text3);background:#F2F1EE;border-radius:99px;padding:2px 7px">📅 2026-04-29</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;padding-right:8px;color:var(--text3);font-size:14px">›</div>
+        </div>
+      </div>
+    </div>
+    <div class="home-ind"><div class="home-ind-bar"></div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ SLIDE 5: ISSUES ═══════════════ -->
+<section data-screen-label="05 Issues">
+  <div class="phone">
+    <div class="di"></div>
+    <div class="sbar light"><span style="color:#0D0C14">9:41</span><span style="color:#0D0C14">▌▌▌ ▾ ▮</span></div>
+    <div class="app-body">
+      <div style="background:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,0,0,0.06)">
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="width:30px;height:30px;border-radius:10px;background:#F2F1EE;display:flex;align-items:center;justify-content:center">←</div>
+          <span style="font-size:15px;font-weight:800;color:var(--text1)">Issues</span>
+        </div>
+        <div style="background:var(--gold);color:#fff;border-radius:10px;padding:6px 12px;font-size:10px;font-weight:800">+ New</div>
+      </div>
+      <!-- Stats -->
+      <div style="background:#fff;display:flex;border-bottom:1px solid rgba(0,0,0,0.06)">
+        
+        <div style="flex:1;padding:9px 4px;text-align:center;position:relative">
+          <div style="font-size:18px;font-weight:800;color:#EF4444">3</div>
+          <div style="font-size:8px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.2px">Open</div>
+        </div>
+        <div style="flex:1;padding:9px 4px;text-align:center;position:relative">
+          <div style="font-size:18px;font-weight:800;color:#F59E0B">4</div>
+          <div style="font-size:8px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.2px">In Progress</div>
+        </div>
+        <div style="flex:1;padding:9px 4px;text-align:center;position:relative">
+          <div style="font-size:18px;font-weight:800;color:#10B981">3</div>
+          <div style="font-size:8px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.2px">Resolved</div>
+        </div>
+        <div style="flex:1;padding:9px 4px;text-align:center;position:relative">
+          <div style="font-size:18px;font-weight:800;color:#8B5CF6">1</div>
+          <div style="font-size:8px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.2px">On Hold</div>
+        </div>
+      </div>
+      <!-- Filter -->
+      <div style="background:#fff;padding:8px 12px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;gap:5px">
+        <div style="font-size:10px;font-weight:700;border-radius:99px;padding:5px 10px;background:var(--navy);color:#fff">All</div><div style="font-size:10px;font-weight:700;border-radius:99px;padding:5px 10px;background:#F2F1EE;color:var(--text3)">High</div><div style="font-size:10px;font-weight:700;border-radius:99px;padding:5px 10px;background:#F2F1EE;color:var(--text3)">Medium</div><div style="font-size:10px;font-weight:700;border-radius:99px;padding:5px 10px;background:#F2F1EE;color:var(--text3)">Low</div>
+      </div>
+      <!-- Tickets -->
+      <div style="flex:1;overflow:hidden;padding:8px 12px;display:flex;flex-direction:column;gap:7px">
+        
+        <div style="background:#fff;border-radius:13px;display:flex;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:4px;background:#EF4444;flex-shrink:0"></div>
+          <div style="flex:1;padding:9px 10px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+              <span style="font-size:8px;font-weight:800;color:var(--gold)">TT-001</span>
+              <span style="font-size:8px;font-weight:700;color:#EF4444;background:#EF444418;border-radius:99px;padding:1px 6px">High</span>
+            </div>
+            <div style="font-size:10px;color:var(--text1);margin-bottom:5px;line-height:1.3">Lift stuck between floors — Tower A</div>
+            <div style="display:flex;gap:5px;align-items:center">
+              <span style="font-size:8px;color:#EF4444;background:#EF444418;border-radius:99px;padding:2px 6px;font-weight:700">In Progress</span>
+              <span style="font-size:8px;color:var(--text3)">📍 Tower A</span>
+            </div>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:13px;display:flex;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:4px;background:#EF4444;flex-shrink:0"></div>
+          <div style="flex:1;padding:9px 10px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+              <span style="font-size:8px;font-weight:800;color:var(--gold)">TT-002</span>
+              <span style="font-size:8px;font-weight:700;color:#EF4444;background:#EF444418;border-radius:99px;padding:1px 6px">High</span>
+            </div>
+            <div style="font-size:10px;color:var(--text1);margin-bottom:5px;line-height:1.3">Water leakage near B1-23 in Basement</div>
+            <div style="display:flex;gap:5px;align-items:center">
+              <span style="font-size:8px;color:#EF4444;background:#EF444418;border-radius:99px;padding:2px 6px;font-weight:700">Open</span>
+              <span style="font-size:8px;color:var(--text3)">📍 Parking</span>
+            </div>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:13px;display:flex;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:4px;background:#F59E0B;flex-shrink:0"></div>
+          <div style="flex:1;padding:9px 10px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+              <span style="font-size:8px;font-weight:800;color:var(--gold)">TT-003</span>
+              <span style="font-size:8px;font-weight:700;color:#F59E0B;background:#F59E0B18;border-radius:99px;padding:1px 6px">Medium</span>
+            </div>
+            <div style="font-size:10px;color:var(--text1);margin-bottom:5px;line-height:1.3">Treadmill #2 not working in gym</div>
+            <div style="display:flex;gap:5px;align-items:center">
+              <span style="font-size:8px;color:#F59E0B;background:#F59E0B18;border-radius:99px;padding:2px 6px;font-weight:700">In Progress</span>
+              <span style="font-size:8px;color:var(--text3)">📍 Clubhouse</span>
+            </div>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:13px;display:flex;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:4px;background:#F59E0B;flex-shrink:0"></div>
+          <div style="flex:1;padding:9px 10px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+              <span style="font-size:8px;font-weight:800;color:var(--gold)">TT-004</span>
+              <span style="font-size:8px;font-weight:700;color:#F59E0B;background:#F59E0B18;border-radius:99px;padding:1px 6px">Medium</span>
+            </div>
+            <div style="font-size:10px;color:var(--text1);margin-bottom:5px;line-height:1.3">Loud noise from flat B-504 after 11pm</div>
+            <div style="display:flex;gap:5px;align-items:center">
+              <span style="font-size:8px;color:#F59E0B;background:#F59E0B18;border-radius:99px;padding:2px 6px;font-weight:700">Open</span>
+              <span style="font-size:8px;color:var(--text3)">📍 Tower B</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#fff;display:flex;border-top:1px solid rgba(0,0,0,0.06)">
+      
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">🏠</div>
+        <div style="font-size:9px;font-weight:600;color:var(--text3)">Home</div>
+        
+      </div>
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">📋</div>
+        <div style="font-size:9px;font-weight:800;color:var(--navy)">Issues</div>
+        <div style="width:40px;height:3px;background:var(--gold);border-radius:99px;margin:2px auto 0"></div>
+      </div>
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">📅</div>
+        <div style="font-size:9px;font-weight:600;color:var(--text3)">Book</div>
+        
+      </div>
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">📊</div>
+        <div style="font-size:9px;font-weight:600;color:var(--text3)">Polls</div>
+        
+      </div>
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">👥</div>
+        <div style="font-size:9px;font-weight:600;color:var(--text3)">Team</div>
+        
+      </div>
+    </div>
+    <div class="home-ind"><div class="home-ind-bar"></div></div>
+  </div>
+  <div class="conn R"></div>
+  <div class="anno R" style="top:50%;transform:translateY(-50%)">
+    <div class="num">Screen 04</div>
+    <div class="ttl">Issues &amp; Tracking</div>
+    <div class="sub">Full-lifecycle community ticketing from raise to resolve.</div>
+    <ul>
+      <li>Color-coded left accent by priority</li>
+      <li>Filter by status &amp; priority</li>
+      <li>SLA due dates &amp; assignments</li>
+      <li>Photo attachments supported</li>
+      <li>Comment thread per ticket</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════ SLIDE 6: BOOKING ═══════════════ -->
+<section data-screen-label="06 Booking">
+  <div class="anno L" style="top:50%;transform:translateY(-50%)">
+    <div class="num">Screen 05</div>
+    <div class="ttl">Facility Slot Booking</div>
+    <div class="sub">Self-service booking for all community amenities.</div>
+    <ul>
+      <li>5 bookable facilities</li>
+      <li>7-day date picker</li>
+      <li>Live slot availability grid</li>
+      <li>Max 2 active bookings per flat</li>
+      <li>Instant confirmation with ID</li>
+    </ul>
+  </div>
+  <div class="conn L"></div>
+  <div class="phone">
+    <div class="di"></div>
+    <div class="sbar light"><span style="color:#0D0C14">9:41</span><span style="color:#0D0C14">▌▌▌ ▾ ▮</span></div>
+    <div class="app-body">
+      <div style="background:#fff;padding:10px 14px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:6px">
+        <div style="width:30px;height:30px;border-radius:10px;background:#F2F1EE;display:flex;align-items:center;justify-content:center">←</div>
+        <span style="font-size:15px;font-weight:800;color:var(--text1)">Badminton Court 1</span>
+      </div>
+      <!-- Dates -->
+      <div style="padding:10px 12px 6px">
+        <div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">Select Date</div>
+        <div style="display:flex;gap:6px">
+          
+          <div style="width:44px;height:52px;border-radius:12px;background:var(--navy);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;gap:2px">
+            <div style="font-size:8px;opacity:0.7">Sun</div>
+            <div style="font-size:16px;font-weight:800">27</div>
+          </div>
+          <div style="width:44px;height:52px;border-radius:12px;background:#fff;color:var(--text1);box-shadow:0 1px 4px rgba(0,0,0,0.07);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;gap:2px">
+            <div style="font-size:8px;opacity:0.7">Mon</div>
+            <div style="font-size:16px;font-weight:800">28</div>
+          </div>
+          <div style="width:44px;height:52px;border-radius:12px;background:#fff;color:var(--text1);box-shadow:0 1px 4px rgba(0,0,0,0.07);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;gap:2px">
+            <div style="font-size:8px;opacity:0.7">Tue</div>
+            <div style="font-size:16px;font-weight:800">29</div>
+          </div>
+          <div style="width:44px;height:52px;border-radius:12px;background:#fff;color:var(--text1);box-shadow:0 1px 4px rgba(0,0,0,0.07);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;gap:2px">
+            <div style="font-size:8px;opacity:0.7">Wed</div>
+            <div style="font-size:16px;font-weight:800">30</div>
+          </div>
+          <div style="width:44px;height:52px;border-radius:12px;background:#fff;color:var(--text1);box-shadow:0 1px 4px rgba(0,0,0,0.07);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;gap:2px">
+            <div style="font-size:8px;opacity:0.7">Thu</div>
+            <div style="font-size:16px;font-weight:800">1</div>
+          </div>
+        </div>
+      </div>
+      <!-- Rules -->
+      <div style="margin:6px 12px;background:#fff;border-radius:12px;padding:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+        <div style="font-size:9px;color:var(--text3);line-height:1.6">• Max 60 min · Free · Court shoes mandatory · Max 2 bookings/flat</div>
+      </div>
+      <!-- Slots -->
+      <div style="padding:4px 12px 0">
+        <div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">Available Slots — Apr 27</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+          
+          <div style="border-radius:10px;padding:9px 2px;text-align:center;font-size:10px;font-weight:700;background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,0.06)">06:00</div>
+          <div style="border-radius:10px;padding:9px 2px;text-align:center;font-size:10px;font-weight:700;background:#F2F1EE;color:var(--text3)">07:00</div>
+          <div style="border-radius:10px;padding:9px 2px;text-align:center;font-size:10px;font-weight:700;background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,0.06)">08:00</div>
+          <div style="border-radius:10px;padding:9px 2px;text-align:center;font-size:10px;font-weight:700;background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,0.06)">09:00</div>
+          <div style="border-radius:10px;padding:9px 2px;text-align:center;font-size:10px;font-weight:700;background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,0.06)">10:00</div>
+          <div style="border-radius:10px;padding:9px 2px;text-align:center;font-size:10px;font-weight:700;background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,0.06)">11:00</div>
+          <div style="border-radius:10px;padding:9px 2px;text-align:center;font-size:10px;font-weight:700;background:#F2F1EE;color:var(--text3)">18:00</div>
+          <div style="border-radius:10px;padding:9px 2px;text-align:center;font-size:10px;font-weight:700;background:var(--gold);color:#fff;box-shadow:0 3px 10px rgba(201,168,76,0.4)">19:00</div>
+          <div style="border-radius:10px;padding:9px 2px;text-align:center;font-size:10px;font-weight:700;background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,0.06)">20:00</div>
+          <div style="border-radius:10px;padding:9px 2px;text-align:center;font-size:10px;font-weight:700;background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,0.06)">21:00</div>
+          <div style="border-radius:10px;padding:9px 2px;text-align:center;font-size:10px;font-weight:700;background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,0.06)">16:00</div>
+          <div style="border-radius:10px;padding:9px 2px;text-align:center;font-size:10px;font-weight:700;background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,0.06)">17:00</div>
+        </div>
+      </div>
+      <!-- Confirm bar -->
+      <div style="margin:10px 12px;background:var(--navy);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:0.5px;margin-bottom:2px">SELECTED</div>
+          <div style="font-size:13px;font-weight:800;color:#fff">19:00 – 20:00</div>
+        </div>
+        <div style="background:var(--gold);border-radius:10px;padding:9px 16px;font-size:11px;font-weight:800;color:#fff">Confirm</div>
+      </div>
+    </div>
+    <div class="home-ind"><div class="home-ind-bar"></div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ SLIDE 7: POLLS ═══════════════ -->
+<section data-screen-label="07 Polls">
+  <div class="phone">
+    <div class="di"></div>
+    <div class="sbar light"><span style="color:#0D0C14">9:41</span><span style="color:#0D0C14">▌▌▌ ▾ ▮</span></div>
+    <div class="app-body">
+      <div style="background:#fff;padding:10px 14px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:6px">
+        <div style="width:30px;height:30px;border-radius:10px;background:#F2F1EE;display:flex;align-items:center;justify-content:center">←</div>
+        <span style="font-size:15px;font-weight:800;color:var(--text1)">Poll</span>
+      </div>
+      <!-- Poll detail -->
+      <div style="flex:1;overflow:hidden;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+        <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+          <div style="display:flex;gap:6px;margin-bottom:8px">
+            <span style="font-size:9px;font-weight:700;color:#10B981;background:#ECFDF5;border-radius:99px;padding:3px 9px">● Live</span>
+          </div>
+          <div style="font-size:13px;font-weight:800;color:var(--text1);margin-bottom:6px;line-height:1.3">Should we install CCTV cameras in Basement 2?</div>
+          <div style="font-size:10px;color:var(--text3)">📅 Apr 22 – Apr 29 · All Residents</div>
+        </div>
+        <!-- Options with bars -->
+        
+        <div style="background:#fff;border-radius:12px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.05);border:1.5px solid var(--gold)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:11px;font-weight:700;color:var(--text1);flex:1">Yes, proceed immediately</span>
+            <span style="font-size:9px;font-weight:800;color:var(--gold);background:#F7EDD3;border-radius:99px;padding:2px 8px">Leading</span>
+            
+          </div>
+          <div style="height:6px;background:#F2F1EE;border-radius:99px;overflow:hidden;margin-bottom:4px">
+            <div style="height:100%;width:52%;background:var(--gold);border-radius:99px;opacity:1"></div>
+          </div>
+          <div style="font-size:10px;font-weight:800;color:var(--text2)">52%</div>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.05);border:1.5px solid transparent">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:11px;font-weight:700;color:var(--text1);flex:1">Yes, defer to next quarter</span>
+            
+            
+          </div>
+          <div style="height:6px;background:#F2F1EE;border-radius:99px;overflow:hidden;margin-bottom:4px">
+            <div style="height:100%;width:14%;background:var(--navy);border-radius:99px;opacity:0.5"></div>
+          </div>
+          <div style="font-size:10px;font-weight:800;color:var(--text2)">14%</div>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.05);border:1.5px solid transparent">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:11px;font-weight:700;color:var(--text1);flex:1">No, not required</span>
+            
+            <span style="font-size:9px;font-weight:800;color:#10B981;background:#ECFDF5;border-radius:99px;padding:2px 8px">✓ You</span>
+          </div>
+          <div style="height:6px;background:#F2F1EE;border-radius:99px;overflow:hidden;margin-bottom:4px">
+            <div style="height:100%;width:7%;background:var(--text3);border-radius:99px;opacity:0.5"></div>
+          </div>
+          <div style="font-size:10px;font-weight:800;color:var(--text2)">7%</div>
+        </div>
+        <div style="text-align:center;font-size:10px;color:var(--text3)">124 of 240 eligible voters · 🔒 Anonymous</div>
+      </div>
+    </div>
+    <div style="background:#fff;display:flex;border-top:1px solid rgba(0,0,0,0.06)">
+      
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">🏠</div>
+        <div style="font-size:9px;font-weight:600;color:var(--text3)">Home</div>
+        
+      </div>
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">📋</div>
+        <div style="font-size:9px;font-weight:600;color:var(--text3)">Issues</div>
+        
+      </div>
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">📅</div>
+        <div style="font-size:9px;font-weight:600;color:var(--text3)">Book</div>
+        
+      </div>
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">📊</div>
+        <div style="font-size:9px;font-weight:800;color:var(--navy)">Polls</div>
+        <div style="width:40px;height:3px;background:var(--gold);border-radius:99px;margin:2px auto 0"></div>
+      </div>
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">👥</div>
+        <div style="font-size:9px;font-weight:600;color:var(--text3)">Team</div>
+        
+      </div>
+    </div>
+    <div class="home-ind"><div class="home-ind-bar"></div></div>
+  </div>
+  <div class="conn R"></div>
+  <div class="anno R" style="top:50%;transform:translateY(-50%)">
+    <div class="num">Screen 06</div>
+    <div class="ttl">Polls &amp; Voting</div>
+    <div class="sub">Democratic community decisions — anonymous and transparent.</div>
+    <ul>
+      <li>Elections, budgets, policy polls</li>
+      <li>Anonymous one-vote-per-resident</li>
+      <li>Live animated result bars</li>
+      <li>Participation percentage tracking</li>
+      <li>Active / upcoming / closed states</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════ SLIDE 8: MEMBERS ═══════════════ -->
+<section data-screen-label="08 Members">
+  <div class="anno L" style="top:50%;transform:translateY(-50%)">
+    <div class="num">Screen 07</div>
+    <div class="ttl">Core Committee</div>
+    <div class="sub">Full RWA directory with one-tap contact actions.</div>
+    <ul>
+      <li>8 committee profiles</li>
+      <li>Filter by team / area</li>
+      <li>Call, WhatsApp, Email in one tap</li>
+      <li>Color-coded by department</li>
+      <li>Responsibilities listed per member</li>
+    </ul>
+  </div>
+  <div class="conn L"></div>
+  <div class="phone">
+    <div class="di"></div>
+    <div class="sbar light"><span style="color:#0D0C14">9:41</span><span style="color:#0D0C14">▌▌▌ ▾ ▮</span></div>
+    <div class="app-body">
+      <div style="background:#fff;padding:10px 14px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:6px">
+        <div style="width:30px;height:30px;border-radius:10px;background:#F2F1EE;display:flex;align-items:center;justify-content:center">←</div>
+        <span style="font-size:15px;font-weight:800;color:var(--text1)">Core Members</span>
+      </div>
+      <!-- Filters -->
+      <div style="background:#fff;padding:8px 12px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;gap:5px;overflow:hidden">
+        <div style="flex-shrink:0;font-size:9px;font-weight:700;border-radius:99px;padding:5px 10px;background:var(--navy);color:#fff">All</div><div style="flex-shrink:0;font-size:9px;font-weight:700;border-radius:99px;padding:5px 10px;background:#F2F1EE;color:var(--text3)">Admin</div><div style="flex-shrink:0;font-size:9px;font-weight:700;border-radius:99px;padding:5px 10px;background:#F2F1EE;color:var(--text3)">Finance</div><div style="flex-shrink:0;font-size:9px;font-weight:700;border-radius:99px;padding:5px 10px;background:#F2F1EE;color:var(--text3)">Cultural</div><div style="flex-shrink:0;font-size:9px;font-weight:700;border-radius:99px;padding:5px 10px;background:#F2F1EE;color:var(--text3)">Security</div>
+      </div>
+      <!-- Members -->
+      <div style="flex:1;overflow:hidden;padding:8px 12px;display:flex;flex-direction:column;gap:7px">
+        
+        <div style="background:#fff;border-radius:13px;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:38px;height:38px;border-radius:12px;background:#1B3A6B;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">SN</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:800;color:var(--text1)">Suresh Narayanan</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:1px">President</div>
+            <span style="font-size:8px;font-weight:800;color:#1B3A6B;background:#1B3A6B18;border-radius:99px;padding:2px 7px">Administration</span>
+          </div>
+          <div style="color:var(--text3);font-size:16px">›</div>
+        </div>
+        <div style="background:#fff;border-radius:13px;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:38px;height:38px;border-radius:12px;background:#1B3A6B;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">PV</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:800;color:var(--text1)">Priya Venkatesh</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:1px">Secretary</div>
+            <span style="font-size:8px;font-weight:800;color:#1B3A6B;background:#1B3A6B18;border-radius:99px;padding:2px 7px">Administration</span>
+          </div>
+          <div style="color:var(--text3);font-size:16px">›</div>
+        </div>
+        <div style="background:#fff;border-radius:13px;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:38px;height:38px;border-radius:12px;background:#1a5c3a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">RI</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:800;color:var(--text1)">Ramesh Iyer</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:1px">Treasurer</div>
+            <span style="font-size:8px;font-weight:800;color:#1a5c3a;background:#1a5c3a18;border-radius:99px;padding:2px 7px">Finance</span>
+          </div>
+          <div style="color:var(--text3);font-size:16px">›</div>
+        </div>
+        <div style="background:#fff;border-radius:13px;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:38px;height:38px;border-radius:12px;background:#6b3a1a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">KS</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:800;color:var(--text1)">Kavitha Subramaniam</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:1px">Tower A Maintenance Head</div>
+            <span style="font-size:8px;font-weight:800;color:#6b3a1a;background:#6b3a1a18;border-radius:99px;padding:2px 7px">Tower A</span>
+          </div>
+          <div style="color:var(--text3);font-size:16px">›</div>
+        </div>
+        <div style="background:#fff;border-radius:13px;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:38px;height:38px;border-radius:12px;background:#3a1a6b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">MK</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:800;color:var(--text1)">Mohan Krishnamurthy</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:1px">Tower B Maintenance Head</div>
+            <span style="font-size:8px;font-weight:800;color:#3a1a6b;background:#3a1a6b18;border-radius:99px;padding:2px 7px">Tower B</span>
+          </div>
+          <div style="color:var(--text3);font-size:16px">›</div>
+        </div>
+        <div style="background:#fff;border-radius:13px;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <div style="width:38px;height:38px;border-radius:12px;background:#b5451b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">AR</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:800;color:var(--text1)">Anitha Reddy</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:1px">Cultural Head</div>
+            <span style="font-size:8px;font-weight:800;color:#b5451b;background:#b5451b18;border-radius:99px;padding:2px 7px">Cultural</span>
+          </div>
+          <div style="color:var(--text3);font-size:16px">›</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#fff;display:flex;border-top:1px solid rgba(0,0,0,0.06)">
+      
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">🏠</div>
+        <div style="font-size:9px;font-weight:600;color:var(--text3)">Home</div>
+        
+      </div>
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">📋</div>
+        <div style="font-size:9px;font-weight:600;color:var(--text3)">Issues</div>
+        
+      </div>
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">📅</div>
+        <div style="font-size:9px;font-weight:600;color:var(--text3)">Book</div>
+        
+      </div>
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">📊</div>
+        <div style="font-size:9px;font-weight:600;color:var(--text3)">Polls</div>
+        
+      </div>
+      <div style="flex:1;padding:8px 4px;text-align:center">
+        <div style="font-size:18px">👥</div>
+        <div style="font-size:9px;font-weight:800;color:var(--navy)">Team</div>
+        <div style="width:40px;height:3px;background:var(--gold);border-radius:99px;margin:2px auto 0"></div>
+      </div>
+    </div>
+    <div class="home-ind"><div class="home-ind-bar"></div></div>
+  </div>
+</section>
+
+</deck-stage>
+
+</body>
+</html>

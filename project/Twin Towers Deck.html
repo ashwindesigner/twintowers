@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Twin Towers App — Screen Deck</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0d1e40; font-family: Arial, Helvetica, sans-serif; }
+    deck-stage { --deck-bg: #0d1e40; }
+    section {
+      width: 1920px; height: 1080px;
+      background: #0d1e40;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+
+    /* Background glow */
+    .bg-glow {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Phone mockup wrapper */
+    .phone-wrap {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 32px;
+    }
+    .phone-frame {
+      width: 320px; height: 693px;
+      border-radius: 44px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.08),
+        0 0 0 9px #0a1628,
+        0 0 0 11px #2a3d6a,
+        0 40px 100px rgba(0,0,0,0.7);
+      position: relative;
+    }
+    .phone-frame img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      display: block;
+    }
+
+    /* Annotation panel */
+    .annotation {
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      z-index: 3;
+    }
+    .annotation.left  { left: 100px; width: 380px; text-align: right; }
+    .annotation.right { right: 100px; width: 380px; text-align: left; }
+
+    .screen-num {
+      font-size: 11px; font-weight: 800; letter-spacing: 3px;
+      color: #C9A84C; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .screen-title {
+      font-size: 40px; font-weight: 800; color: #fff;
+      line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 16px;
+    }
+    .screen-sub {
+      font-size: 15px; color: rgba(255,255,255,0.55);
+      line-height: 1.65; margin-bottom: 24px;
+    }
+    .feature-list { list-style: none; }
+    .feature-list li {
+      font-size: 13px; color: rgba(255,255,255,0.5);
+      padding: 5px 0;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .annotation.left .feature-list li { justify-content: flex-end; }
+    .feature-list li::before {
+      content: '';
+      width: 5px; height: 5px; border-radius: 50%;
+      background: #C9A84C; flex-shrink: 0;
+    }
+    .annotation.left .feature-list li::before { order: 2; }
+
+    .connector {
+      position: absolute; top: 50%;
+      height: 2px; background: linear-gradient(90deg, rgba(201,168,76,0), rgba(201,168,76,0.4));
+      pointer-events: none; z-index: 1;
+    }
+    .connector.left  { right: calc(50% - 160px); transform: translateY(-1px); left: 100px; }
+    .connector.right { left: calc(50% + 160px); transform: translateY(-1px); right: 100px; }
+
+    /* Title slide */
+    .title-slide {
+      flex-direction: column; gap: 0;
+      background: linear-gradient(160deg, #1B2D5B 0%, #0d1420 100%);
+    }
+    .title-logo-wrap {
+      width: 100px; height: 100px; border-radius: 28px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(201,168,76,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 32px;
+    }
+    .title-main { font-size: 72px; font-weight: 900; color: #fff; letter-spacing: -2px; margin-bottom: 8px; }
+    .title-sub  { font-size: 20px; color: rgba(255,255,255,0.45); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 48px; }
+    .title-pill {
+      background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 99px; padding: 8px 24px;
+      font-size: 13px; font-weight: 700; color: #C9A84C; letter-spacing: 1px;
+    }
+    .title-modules {
+      display: flex; gap: 12px; margin-top: 40px; flex-wrap: wrap; justify-content: center;
+    }
+    .module-chip {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 99px; padding: 8px 18px;
+      font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6);
+    }
+  </style>
+</head>
+<body>
+<script src="deck-stage.js"></script>
+
+<deck-stage>
+
+  <!-- 01: Title -->
+  <section class="title-slide" data-screen-label="01 Overview">
+    <div class="bg-glow" style="width:700px;height:700px;background:radial-gradient(circle,rgba(201,168,76,0.12) 0%,transparent 65%);top:-200px;left:50%;transform:translateX(-50%);"></div>
+    <div class="title-logo-wrap">
+      <svg width="60" height="63" viewBox="0 0 100 105" fill="none">
+        <rect x="4" y="6" width="92" height="8" rx="2" fill="#C9A84C"/>
+        <rect x="12" y="2" width="76" height="6" rx="1.5" fill="#C9A84C"/>
+        <rect x="12" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/>
+        <rect x="60" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/>
+        <rect x="44" y="14" width="12" height="76" rx="1.5" fill="#C9A84C"/>
+      </svg>
+    </div>
+    <div class="title-main">Twin Towers</div>
+    <div class="title-sub">Community App · by Namishree</div>
+    <div class="title-pill">Resident Experience Platform</div>
+    <div class="title-modules">
+      <span class="module-chip">🔧 Maintenance</span>
+      <span class="module-chip">📋 Issues</span>
+      <span class="module-chip">🎊 Events</span>
+      <span class="module-chip">📅 Bookings</span>
+      <span class="module-chip">🗳️ Polls</span>
+      <span class="module-chip">📜 Policies</span>
+      <span class="module-chip">👥 Members</span>
+      <span class="module-chip">🔔 Notifications</span>
+    </div>
+  </section>
+
+  <!-- 02: Login -->
+  <section data-screen-label="02 Login">
+    <div class="bg-glow" style="width:600px;height:600px;background:radial-gradient(circle,rgba(201,168,76,0.1) 0%,transparent 65%);top:-100px;left:-100px;"></div>
+    <div class="annotation left">
+      <div class="screen-num">Screen 01</div>
+      <div class="screen-title">Login & Authentication</div>
+      <div class="screen-sub">Secure OTP-based sign-in with branded landing experience.</div>
+      <ul class="feature-list">
+        <li>Mobile OTP authentication</li>
+        <li>Email login fallback</li>
+        <li>Community branding front and center</li>
+        <li>New resident registration</li>
+      </ul>
+    </div>
+    <div class="connector left"></div>
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="screenshots/01-login.png" alt="Login"/></div>
+    </div>
+  </section>
+
+  <!-- 03: Dashboard -->
+  <section data-screen-label="03 Dashboard">
+    <div class="bg-glow" style="width:500px;height:500px;background:radial-gradient(circle,rgba(201,168,76,0.08) 0%,transparent 65%);bottom:-100px;right:-100px;"></div>
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="screenshots/02-dashboard.png" alt="Dashboard"/></div>
+    </div>
+    <div class="connector right"></div>
+    <div class="annotation right">
+      <div class="screen-num">Screen 02</div>
+      <div class="screen-title">Community Dashboard</div>
+      <div class="screen-sub">At-a-glance view of everything happening in your community.</div>
+      <ul class="feature-list">
+        <li>Personalised welcome & flat info</li>
+        <li>Live issue & poll summary</li>
+        <li>Upcoming event banner</li>
+        <li>7 quick-access service tiles</li>
+        <li>Recent issues feed</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 04: Maintenance -->
+  <section data-screen-label="04 Maintenance">
+    <div class="annotation left">
+      <div class="screen-num">Screen 03</div>
+      <div class="screen-title">Maintenance & Asset Records</div>
+      <div class="screen-sub">Full condition tracking across towers, clubhouse, parking and common areas.</div>
+      <ul class="feature-list">
+        <li>Status per asset: Good / Fair / Poor</li>
+        <li>Filter by Tower A, B, Clubhouse, Parking</li>
+        <li>Warranty expiry alerts</li>
+        <li>Full inspection history timeline</li>
+      </ul>
+    </div>
+    <div class="connector left"></div>
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="screenshots/01-screens.png" alt="Maintenance"/></div>
+    </div>
+  </section>
+
+  <!-- 05: Issues -->
+  <section data-screen-label="05 Issues">
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="screenshots/02-screens.png" alt="Issues"/></div>
+    </div>
+    <div class="connector right"></div>
+    <div class="annotation right">
+      <div class="screen-num">Screen 04</div>
+      <div class="screen-title">Issues & Tracking</div>
+      <div class="screen-sub">Community-wide ticketing system with full lifecycle management.</div>
+      <ul class="feature-list">
+        <li>Raise issues with photos</li>
+        <li>Filter by status & priority</li>
+        <li>SLA due dates & assignments</li>
+        <li>Comment thread on each ticket</li>
+        <li>High / Medium / Low priority</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 06: Cultural -->
+  <section data-screen-label="06 Cultural">
+    <div class="annotation left">
+      <div class="screen-num">Screen 05</div>
+      <div class="screen-title">Cultural Activities</div>
+      <div class="screen-sub">Events, festival proposals and photo gallery all in one place.</div>
+      <ul class="feature-list">
+        <li>Upcoming events with registration</li>
+        <li>Resident event proposals</li>
+        <li>Budget voting & approval flow</li>
+        <li>Photo gallery by event</li>
+      </ul>
+    </div>
+    <div class="connector left"></div>
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="screenshots/03-screens.png" alt="Cultural"/></div>
+    </div>
+  </section>
+
+  <!-- 07: Booking -->
+  <section data-screen-label="07 Booking">
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="screenshots/04-screens.png" alt="Booking"/></div>
+    </div>
+    <div class="connector right"></div>
+    <div class="annotation right">
+      <div class="screen-num">Screen 06</div>
+      <div class="screen-title">Facility Slot Booking</div>
+      <div class="screen-sub">Self-service booking for all community amenities.</div>
+      <ul class="feature-list">
+        <li>Badminton courts, lawn, banquet hall</li>
+        <li>7-day date picker</li>
+        <li>Live availability grid</li>
+        <li>Booking confirmation with ID</li>
+        <li>Max 2 active bookings per flat</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 08: Policies -->
+  <section data-screen-label="08 Policies">
+    <div class="annotation left">
+      <div class="screen-num">Screen 07</div>
+      <div class="screen-title">Policies & Rules</div>
+      <div class="screen-sub">Official community guidelines — clear, accessible and always up to date.</div>
+      <ul class="feature-list">
+        <li>Pool, parking, noise, clubhouse rules</li>
+        <li>Numbered, readable format</li>
+        <li>Full by-laws PDF download</li>
+        <li>Updated after AGM or polls</li>
+      </ul>
+    </div>
+    <div class="connector left"></div>
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="screenshots/05-screens.png" alt="Policies"/></div>
+    </div>
+  </section>
+
+  <!-- 09: Polls -->
+  <section data-screen-label="09 Polls">
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="screenshots/06-screens.png" alt="Polls"/></div>
+    </div>
+    <div class="connector right"></div>
+    <div class="annotation right">
+      <div class="screen-num">Screen 08</div>
+      <div class="screen-title">Polls & Voting</div>
+      <div class="screen-sub">Democratic decision-making for the entire community.</div>
+      <ul class="feature-list">
+        <li>Elections, budgets, policy decisions</li>
+        <li>Anonymous voting</li>
+        <li>Live animated result bars</li>
+        <li>Participation tracking</li>
+        <li>Active / upcoming / closed states</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 10: Members -->
+  <section data-screen-label="10 Members">
+    <div class="annotation left">
+      <div class="screen-num">Screen 09</div>
+      <div class="screen-title">Core Committee</div>
+      <div class="screen-sub">Full directory of RWA members with direct contact actions.</div>
+      <ul class="feature-list">
+        <li>8 committee profiles</li>
+        <li>Filter by team / area</li>
+        <li>Call, WhatsApp, Email in one tap</li>
+        <li>Responsibilities listed per member</li>
+      </ul>
+    </div>
+    <div class="connector left"></div>
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="screenshots/07-screens.png" alt="Members"/></div>
+    </div>
+  </section>
+
+  <!-- 11: Notifications -->
+  <section data-screen-label="11 Notifications">
+    <div class="phone-wrap">
+      <div class="phone-frame"><img src="screenshots/08-screens.png" alt="Notifications"/></div>
+    </div>
+    <div class="connector right"></div>
+    <div class="annotation right">
+      <div class="screen-num">Screen 10</div>
+      <div class="screen-title">Notifications</div>
+      <div class="screen-sub">Stay informed on everything that matters in your community.</div>
+      <ul class="feature-list">
+        <li>Issue updates & status changes</li>
+        <li>Booking confirmations</li>
+        <li>New polls & event announcements</li>
+        <li>Grouped new / earlier</li>
+        <li>Mark all read in one tap</li>
+      </ul>
+    </div>
+  </section>
+
+</deck-stage>
+
+<script type="application/json" id="speaker-notes">
+[
+  "Welcome to Twin Towers by Namishree — a full-featured resident community app.",
+  "The login screen uses mobile OTP for secure, frictionless sign-in with the community brand front and center.",
+  "The dashboard gives every resident a personalised view — open issues, active polls, upcoming events, and quick access to all 7 modules.",
+  "Maintenance tracks the condition of every asset across Tower A, Tower B, the Clubhouse, Common Areas, and all 3 parking basements.",
+  "The Issues module is a full ticketing system — residents raise issues, task members update status, and everyone can track progress in real time.",
+  "Cultural Activities covers upcoming events, festival proposals with budget voting, and an album gallery of past celebrations.",
+  "Slot Booking lets residents self-serve for badminton courts, the lawn, banquet hall and club house rooms — with a 7-day availability grid.",
+  "Policies keeps all community rules accessible and up to date — pool timings, parking rules, noise guidelines, and the full PDF by-laws.",
+  "Polls enables democratic decision-making — from committee elections to CCTV investments and festival budgets. Fully anonymous.",
+  "The Core Committee directory gives every resident direct access to the right person — call, WhatsApp, or email in one tap.",
+  "Notifications keeps residents informed on everything — issue updates, booking confirmations, new polls, and community announcements."
+]
+</script>
+</body>
+</html>

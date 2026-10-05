@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Twin Towers Community App — Print</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --gold:      #C9A84C;
+      --gold-soft: #F7EDD3;
+      --navy:      #1B2D5B;
+      --navy-soft: #EEF1F8;
+      --bg:        #F7F6F3;
+      --surface:   #FFFFFF;
+      --surface-2: #F2F1EE;
+      --text-1:    #0D0C14;
+      --text-2:    #58576A;
+      --text-3:    #A09FB0;
+      --border:    rgba(0,0,0,0.07);
+      --success:   #10B981;
+      --warning:   #F59E0B;
+      --danger:    #EF4444;
+      --info:      #3B82F6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      background: #e8e6e2;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ── Page layout ── */
+    @page { size: A4 landscape; margin: 12mm 10mm; }
+
+    .page {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 28px;
+      padding: 20px 0 28px;
+      break-before: page;
+      break-inside: avoid;
+      page-break-before: always;
+      page-break-inside: avoid;
+    }
+    .page:first-child { break-before: avoid; page-break-before: avoid; }
+
+    /* ── Phone shell ── */
+    .phone {
+      width: 260px;
+      flex-shrink: 0;
+      background: #111;
+      border-radius: 34px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+    }
+    .phone-island {
+      height: 22px;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .phone-island-pill {
+      width: 72px; height: 14px;
+      background: #000; border-radius: 99px;
+    }
+    .status-bar {
+      padding: 0 20px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .status-bar.dark { background: var(--navy); color: rgba(255,255,255,0.85); }
+    .status-bar.light { background: #fff; color: var(--text-1); }
+    .screen-content {
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .home-bar-wrap {
+      display: flex; justify-content: center;
+      padding: 6px 0 8px;
+      flex-shrink: 0;
+    }
+    .home-bar-pill {
+      width: 72px; height: 4px;
+      background: rgba(255,255,255,0.25); border-radius: 99px;
+    }
+    .phone.light-phone .home-bar-pill { background: rgba(0,0,0,0.18); }
+
+    /* ── Page label ── */
+    .page-label {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--text-3);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      align-self: center;
+      flex-shrink: 0;
+    }
+
+    /* ── Cover page ── */
+    .cover-page {
+      break-before: avoid;
+      page-break-before: avoid;
+      height: 550px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: var(--navy);
+      border-radius: 20px;
+      margin: 20px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover-glow {
+      position: absolute;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,0.2) 0%, transparent 65%);
+      top: -100px; left: 50%; transform: translateX(-50%);
+    }
+    .cover-logo-box {
+      width: 80px; height: 80px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(201,168,76,0.35);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .cover-title { font-size: 32px; font-weight: 900; color: var(--gold); letter-spacing: 4px; }
+    .cover-by { font-size: 13px; color: rgba(255,255,255,0.45); letter-spacing: 2px; font-weight: 600; }
+    .cover-desc { font-size: 13px; color: rgba(255,255,255,0.35); margin-top: 4px; }
+    .cover-modules {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center; padding: 0 40px; margin-top: 8px;
+    }
+    .cover-module {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 99px; padding: 5px 14px;
+      font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.65);
+    }
+    .cover-version {
+      position: absolute; bottom: 20px;
+      font-size: 10px; color: rgba(255,255,255,0.2); letter-spacing: 1px;
+    }
+
+    /* ── SCREEN: Login ── */
+    .s-login {
+      background: linear-gradient(180deg, var(--navy) 0%, #0d1e40 55%, var(--bg) 55%);
+      padding: 0;
+    }
+    .s-login-hero {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 20px 16px 20px; gap: 6px;
+      position: relative;
+    }
+    .s-login-logo-box {
+      width: 60px; height: 60px; border-radius: 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(201,168,76,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 4px;
+    }
+    .s-login-title { font-size: 16px; font-weight: 900; color: var(--gold); letter-spacing: 3px; }
+    .s-login-sub { font-size: 9px; color: rgba(255,255,255,0.4); letter-spacing: 1px; font-weight: 600; }
+    .s-login-card {
+      background: #fff; border-radius: 20px 20px 0 0;
+      padding: 18px 16px; margin: 0;
+    }
+    .s-login-card-title { font-size: 15px; font-weight: 800; color: var(--text-1); margin-bottom: 3px; }
+    .s-login-card-sub { font-size: 9px; color: var(--text-3); margin-bottom: 12px; }
+    .s-phone-input {
+      display: flex; gap: 6px; margin-bottom: 10px;
+    }
+    .s-country { background: var(--surface-2); border: 1.5px solid var(--border); border-radius: 10px; padding: 8px 10px; font-size: 9px; font-weight: 700; color: var(--text-1); flex-shrink: 0; }
+    .s-input { flex: 1; background: var(--surface-2); border: 1.5px solid var(--border); border-radius: 10px; padding: 8px 10px; font-size: 9px; color: var(--text-3); }
+    .s-btn { width: 100%; background: var(--gold); color: #fff; border: none; border-radius: 10px; padding: 9px; font-size: 10px; font-weight: 800; text-align: center; }
+    .s-divider { text-align: center; font-size: 8px; color: var(--text-3); margin: 8px 0; }
+    .s-btn-ghost { width: 100%; background: transparent; border: 1.5px solid var(--border); border-radius: 10px; padding: 8px; font-size: 9px; font-weight: 700; color: var(--navy); text-align: center; }
+
+    /* ── SCREEN: Dashboard ── */
+    .s-dash-header {
+      background: var(--navy);
+      padding: 10px 14px 14px;
+      border-radius: 0 0 20px 20px;
+    }
+    .s-dash-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .s-dash-logo-row { display: flex; align-items: center; gap: 8px; }
+    .s-logo-mark { width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.1); border: 1px solid rgba(201,168,76,0.3); display: flex; align-items: center; justify-content: center; }
+    .s-dash-name { font-size: 11px; font-weight: 800; color: var(--gold); letter-spacing: 0.5px; }
+    .s-dash-by { font-size: 7px; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
+    .s-avatar { width: 28px; height: 28px; border-radius: 9px; background: var(--gold); color: var(--navy); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; }
+    .s-welcome { font-size: 14px; font-weight: 800; color: #fff; }
+    .s-welcome-sub { font-size: 8px; color: rgba(255,255,255,0.45); margin-top: 2px; margin-bottom: 8px; }
+    .s-pills { display: flex; background: rgba(255,255,255,0.08); border-radius: 12px; padding: 8px 0; }
+    .s-pill { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .s-pill-dot { width: 5px; height: 5px; border-radius: 50%; }
+    .s-pill-num { font-size: 13px; font-weight: 800; color: #fff; }
+    .s-pill-label { font-size: 7px; font-weight: 600; color: rgba(255,255,255,0.45); }
+    .s-pill-div { width: 1px; background: rgba(255,255,255,0.1); }
+    .s-event-card {
+      background: linear-gradient(135deg, #1B3A6B 0%, #0d1e40 100%);
+      border-radius: 14px; padding: 12px; margin: 10px 10px 0;
+      border: 1px solid rgba(201,168,76,0.15);
+    }
+    .s-event-label { font-size: 7px; font-weight: 800; color: var(--gold); letter-spacing: 1.5px; margin-bottom: 3px; }
+    .s-event-title { font-size: 12px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .s-event-meta { font-size: 8px; color: rgba(255,255,255,0.5); }
+    .s-section-hd { display: flex; justify-content: space-between; padding: 10px 10px 6px; }
+    .s-section-title { font-size: 8px; font-weight: 800; color: var(--text-3); letter-spacing: 0.5px; text-transform: uppercase; }
+    .s-section-link { font-size: 8px; font-weight: 700; color: var(--gold); }
+    .s-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; padding: 0 10px; }
+    .s-cat-card { background: #fff; border-radius: 12px; padding: 10px 6px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .s-cat-emoji { font-size: 18px; }
+    .s-cat-label { font-size: 8px; font-weight: 800; color: var(--text-1); text-align: center; }
+    .s-cat-sub { font-size: 7px; color: var(--text-3); text-align: center; }
+
+    /* ── SCREEN: Maintenance ── */
+    .s-maint-summary {
+      display: flex; background: #fff; border-bottom: 1px solid var(--border); padding: 8px 0;
+    }
+    .s-maint-stat { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .s-maint-badge { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; }
+    .s-maint-stat-label { font-size: 7px; font-weight: 700; color: var(--text-3); letter-spacing: 0.3px; }
+    .s-maint-tabs { display: flex; gap: 4px; padding: 6px 8px; background: #fff; border-bottom: 1px solid var(--border); overflow: hidden; }
+    .s-tab { font-size: 8px; font-weight: 700; border-radius: 99px; padding: 3px 8px; background: var(--surface-2); color: var(--text-3); white-space: nowrap; flex-shrink: 0; }
+    .s-tab-active { background: var(--navy); color: #fff; }
+    .s-maint-card { display: flex; align-items: stretch; background: #fff; border-radius: 12px; margin: 0 8px 6px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .s-maint-accent { width: 3px; flex-shrink: 0; }
+    .s-maint-body { flex: 1; padding: 8px 10px; }
+    .s-maint-cat { font-size: 7px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
+    .s-maint-name { font-size: 10px; font-weight: 800; color: var(--text-1); margin-bottom: 5px; }
+    .s-maint-chips { display: flex; flex-wrap: wrap; gap: 3px; }
+    .s-mchip { font-size: 7px; font-weight: 600; color: var(--text-2); background: var(--surface-2); border-radius: 99px; padding: 2px 6px; }
+    .s-maint-status { font-size: 8px; font-weight: 700; border-radius: 99px; padding: 2px 7px; flex-shrink: 0; align-self: center; margin: 0 6px; }
+
+    /* ── SCREEN: Issues ── */
+    .s-issue-stats { display: flex; background: #fff; border-bottom: 1px solid var(--border); }
+    .s-issue-stat { flex: 1; padding: 7px 4px; text-align: center; }
+    .s-issue-stat-num { font-size: 16px; font-weight: 800; }
+    .s-issue-stat-label { font-size: 7px; font-weight: 700; color: var(--text-3); letter-spacing: 0.3px; text-transform: uppercase; }
+    .s-issue-card { display: flex; align-items: stretch; background: #fff; border-radius: 12px; margin: 0 8px 6px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .s-issue-accent { width: 3px; flex-shrink: 0; }
+    .s-issue-body { flex: 1; padding: 8px 10px; }
+    .s-ticket-id { font-size: 7px; font-weight: 800; color: var(--gold); letter-spacing: 0.4px; display: block; margin-bottom: 3px; }
+    .s-issue-desc { font-size: 10px; color: var(--text-1); line-height: 1.4; margin-bottom: 5px; }
+    .s-issue-meta { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+    .s-priority { font-size: 7px; font-weight: 700; border-radius: 99px; padding: 2px 6px; }
+
+    /* ── SCREEN: Polls ── */
+    .s-poll-card { background: #fff; border-radius: 12px; margin: 0 8px 6px; padding: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .s-poll-status { display: flex; gap: 5px; align-items: center; margin-bottom: 5px; }
+    .s-poll-badge { font-size: 7px; font-weight: 700; border-radius: 99px; padding: 2px 7px; }
+    .s-poll-title { font-size: 10px; font-weight: 800; color: var(--text-1); line-height: 1.4; margin-bottom: 6px; }
+    .s-poll-meta { font-size: 8px; color: var(--text-3); margin-bottom: 6px; }
+    .s-poll-bar { display: flex; height: 4px; border-radius: 99px; overflow: hidden; gap: 1px; }
+    .s-voted-badge { font-size: 7px; font-weight: 700; color: var(--success); background: rgba(16,185,129,0.12); border-radius: 99px; padding: 2px 7px; }
+
+    /* ── SCREEN: Members ── */
+    .s-member-card { display: flex; align-items: center; gap: 8px; background: #fff; border-radius: 12px; margin: 0 8px 6px; padding: 9px 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .s-member-av { width: 34px; height: 34px; border-radius: 10px; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; flex-shrink: 0; }
+    .s-member-name { font-size: 10px; font-weight: 800; color: var(--text-1); margin-bottom: 1px; }
+    .s-member-role { font-size: 8px; color: var(--text-2); margin-bottom: 3px; }
+    .s-member-team { font-size: 7px; font-weight: 700; border-radius: 99px; padding: 2px 7px; display: inline-block; }
+
+    /* ── SCREEN: Booking ── */
+    .s-book-fac { display: flex; align-items: center; gap: 0; background: #fff; border-radius: 12px; margin: 0 8px 6px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .s-book-thumb { width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .s-book-info { flex: 1; padding: 0 8px; }
+    .s-book-name { font-size: 10px; font-weight: 800; color: var(--text-1); margin-bottom: 2px; }
+    .s-book-meta { font-size: 8px; color: var(--text-3); }
+
+    /* ── SCREEN: Policies ── */
+    .s-pol-banner { background: var(--navy); border-radius: 12px; margin: 8px 8px; padding: 12px; }
+    .s-pol-banner-title { font-size: 11px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .s-pol-banner-sub { font-size: 8px; color: rgba(255,255,255,0.55); line-height: 1.5; }
+    .s-pol-card { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 12px; margin: 0 8px 6px; padding: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .s-pol-icon { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .s-pol-name { font-size: 10px; font-weight: 800; color: var(--text-1); margin-bottom: 2px; }
+    .s-pol-count { font-size: 8px; color: var(--text-3); }
+
+    /* ── Bottom Nav ── */
+    .s-bottom-nav {
+      display: flex; background: #fff;
+      border-top: 1px solid var(--border); padding: 5px 0 6px;
+    }
+    .s-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .s-nav-icon-wrap { width: 32px; height: 22px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .s-nav-icon-wrap.active { background: var(--navy-soft); }
+    .s-nav-label { font-size: 7px; font-weight: 700; }
+    .s-nav-label.active { color: var(--navy); font-weight: 800; }
+    .s-nav-label.inactive { color: var(--text-3); }
+
+    /* ── Screen header ── */
+    .s-screen-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: #fff; border-bottom: 1px solid var(--border); }
+    .s-header-back { width: 26px; height: 26px; border-radius: 8px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-1); }
+    .s-header-title { font-size: 12px; font-weight: 800; color: var(--text-1); }
+    .s-header-info { width: 26px; height: 26px; border-radius: 8px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-2); }
+    .s-header-new { background: var(--gold); color: #fff; border-radius: 8px; padding: 4px 8px; font-size: 8px; font-weight: 800; }
+
+    /* ── Screen scroll area ── */
+    .s-scroll { padding: 8px 0; }
+
+    /* ── Notifications ── */
+    .s-notif-card { display: flex; gap: 8px; background: #fff; border-radius: 12px; margin: 0 8px 5px; padding: 9px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+    .s-notif-card.unread { border-left: 3px solid var(--gold); background: #fffdf5; }
+    .s-notif-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .s-notif-title { font-size: 9px; font-weight: 800; color: var(--text-1); margin-bottom: 2px; }
+    .s-notif-msg { font-size: 8px; color: var(--text-2); line-height: 1.4; margin-bottom: 2px; }
+    .s-notif-time { font-size: 7px; color: var(--text-3); }
+
+    /* ── Print only ── */
+    @media print {
+      body { background: white; }
+      .page { padding: 0; margin: 0; }
+      .cover-page { margin: 0; border-radius: 0; }
+    }
+    @media screen {
+      .page { margin-bottom: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- COVER PAGE                                            -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="page" style="break-before:avoid;page-break-before:avoid">
+  <div class="cover-page" style="width:100%">
+    <div class="cover-glow"></div>
+    <div class="cover-logo-box">
+      <svg width="44" height="46" viewBox="0 0 100 105" fill="none">
+        <rect x="4" y="6" width="92" height="8" rx="2" fill="#C9A84C"/>
+        <rect x="12" y="2" width="76" height="6" rx="1.5" fill="#C9A84C"/>
+        <rect x="12" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/>
+        <rect x="60" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/>
+        <rect x="44" y="14" width="12" height="76" rx="1.5" fill="#C9A84C"/>
+        <rect x="16" y="18" width="20" height="68" rx="1.5" fill="white" opacity="0.18"/>
+        <rect x="64" y="18" width="20" height="68" rx="1.5" fill="white" opacity="0.18"/>
+      </svg>
+    </div>
+    <div class="cover-title">TWIN TOWERS</div>
+    <div class="cover-by">BY NAMISHREE · COMMUNITY APP · v2.0</div>
+    <div class="cover-desc">UI/UX Design Screens · April 2026</div>
+    <div class="cover-modules">
+      <span class="cover-module">Login & OTP</span>
+      <span class="cover-module">Dashboard</span>
+      <span class="cover-module">Maintenance</span>
+      <span class="cover-module">Issues & Tracking</span>
+      <span class="cover-module">Cultural Events</span>
+      <span class="cover-module">Slot Booking</span>
+      <span class="cover-module">Policies & Rules</span>
+      <span class="cover-module">Polls & Voting</span>
+      <span class="cover-module">Core Members</span>
+      <span class="cover-module">Notifications</span>
+    </div>
+    <div class="cover-version">Twin Towers Community App · Design Documentation · 2026</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PAGE 1: Login + Dashboard                             -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="page">
+  <span class="page-label">Login · Dashboard</span>
+
+  <!-- LOGIN -->
+  <div class="phone">
+    <div class="phone-island"><div class="phone-island-pill"></div></div>
+    <div class="status-bar dark"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content">
+      <div class="s-login">
+        <div class="s-login-hero">
+          <div class="s-login-logo-box">
+            <svg width="36" height="38" viewBox="0 0 100 105" fill="none">
+              <rect x="4" y="6" width="92" height="8" rx="2" fill="#C9A84C"/>
+              <rect x="12" y="2" width="76" height="6" rx="1.5" fill="#C9A84C"/>
+              <rect x="12" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/>
+              <rect x="60" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/>
+              <rect x="44" y="14" width="12" height="76" rx="1.5" fill="#C9A84C"/>
+            </svg>
+          </div>
+          <div class="s-login-title">TWIN TOWERS</div>
+          <div class="s-login-sub">BY NAMISHREE · Your Community, Connected.</div>
+        </div>
+        <div class="s-login-card">
+          <div class="s-login-card-title">Welcome back</div>
+          <div class="s-login-card-sub">Sign in with your registered mobile number</div>
+          <div class="s-phone-input">
+            <div class="s-country">🇮🇳 +91</div>
+            <div class="s-input">Mobile number</div>
+          </div>
+          <div class="s-btn">Continue →</div>
+          <div class="s-divider">— or —</div>
+          <div class="s-btn-ghost">Continue with Email</div>
+          <div style="text-align:center;font-size:8px;color:var(--text-3);margin-top:10px">New resident? <span style="color:var(--gold);font-weight:700">Register here</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="home-bar-wrap light-phone"><div class="home-bar-pill" style="background:rgba(0,0,0,0.15)"></div></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="phone">
+    <div class="phone-island"><div class="phone-island-pill"></div></div>
+    <div class="status-bar dark"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content">
+      <div class="s-dash-header">
+        <div class="s-dash-header-row">
+          <div class="s-dash-logo-row">
+            <div class="s-logo-mark">
+              <svg width="16" height="17" viewBox="0 0 100 105" fill="none">
+                <rect x="4" y="6" width="92" height="8" rx="2" fill="#C9A84C"/>
+                <rect x="12" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/>
+                <rect x="60" y="14" width="28" height="76" rx="2.5" fill="#C9A84C"/>
+                <rect x="44" y="14" width="12" height="76" rx="1.5" fill="#C9A84C"/>
+              </svg>
+            </div>
+            <div>
+              <div class="s-dash-name">TWIN TOWERS</div>
+              <div class="s-dash-by">by Namishree</div>
+            </div>
+          </div>
+          <div class="s-avatar">RS</div>
+        </div>
+        <div class="s-welcome">Good morning, Ravi 👋</div>
+        <div class="s-welcome-sub">A-302 · Tower A</div>
+        <div class="s-pills">
+          <div class="s-pill"><span class="s-pill-dot" style="background:#ef4444"></span><span class="s-pill-num">2</span><span class="s-pill-label">My Issues</span></div>
+          <div class="s-pill-div"></div>
+          <div class="s-pill"><span class="s-pill-dot" style="background:var(--gold)"></span><span class="s-pill-num">2</span><span class="s-pill-label">Active Polls</span></div>
+          <div class="s-pill-div"></div>
+          <div class="s-pill"><span class="s-pill-dot" style="background:#10b981"></span><span class="s-pill-num">1</span><span class="s-pill-label">Bookings</span></div>
+        </div>
+      </div>
+      <div class="s-event-card">
+        <div class="s-event-label">UPCOMING EVENT</div>
+        <div class="s-event-title">Ganesh Chaturthi Celebration</div>
+        <div class="s-event-meta">📅 2026-08-27 · 📍 Club House Lawn</div>
+      </div>
+      <div class="s-section-hd">
+        <span class="s-section-title">Community Services</span>
+        <span class="s-section-link">See all</span>
+      </div>
+      <div class="s-grid">
+        <div class="s-cat-card"><div class="s-cat-emoji">🔧</div><div class="s-cat-label">Maintenance</div><div class="s-cat-sub">10 tracked</div></div>
+        <div class="s-cat-card"><div class="s-cat-emoji">🎊</div><div class="s-cat-label">Events</div><div class="s-cat-sub">3 upcoming</div></div>
+        <div class="s-cat-card"><div class="s-cat-emoji">📋</div><div class="s-cat-label">Issues</div><div class="s-cat-sub">5 open</div></div>
+        <div class="s-cat-card"><div class="s-cat-emoji">🏸</div><div class="s-cat-label">Book</div><div class="s-cat-sub">5 facilities</div></div>
+        <div class="s-cat-card"><div class="s-cat-emoji">📜</div><div class="s-cat-label">Policies</div><div class="s-cat-sub">5 categories</div></div>
+        <div class="s-cat-card"><div class="s-cat-emoji">🗳️</div><div class="s-cat-label">Polls</div><div class="s-cat-sub">2 active</div></div>
+      </div>
+      <div style="height:8px"></div>
+    </div>
+    <div class="s-bottom-nav">
+      <div class="s-nav-item"><div class="s-nav-icon-wrap active">🏠</div><span class="s-nav-label active">Home</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">📋</div><span class="s-nav-label inactive">Issues</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">📅</div><span class="s-nav-label inactive">Book</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">📊</div><span class="s-nav-label inactive">Polls</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">👥</div><span class="s-nav-label inactive">Team</span></div>
+    </div>
+    <div class="home-bar-wrap" style="background:#fff"><div class="home-bar-pill" style="background:rgba(0,0,0,0.15)"></div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PAGE 2: Maintenance + Issues                          -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="page">
+  <span class="page-label">Maintenance · Issues</span>
+
+  <!-- MAINTENANCE -->
+  <div class="phone light-phone">
+    <div class="phone-island"><div class="phone-island-pill"></div></div>
+    <div class="status-bar light"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content">
+      <div class="s-screen-header">
+        <div class="s-header-back">←</div>
+        <span class="s-header-title">Maintenance</span>
+        <div class="s-header-info">ⓘ</div>
+      </div>
+      <div class="s-maint-summary">
+        <div class="s-maint-stat"><div class="s-maint-badge" style="background:rgba(16,185,129,0.12);color:var(--success)">6</div><span class="s-maint-stat-label">Good</span></div>
+        <div style="width:1px;background:var(--border);margin:4px 0"></div>
+        <div class="s-maint-stat"><div class="s-maint-badge" style="background:rgba(245,158,11,0.12);color:var(--warning)">3</div><span class="s-maint-stat-label">Fair</span></div>
+        <div style="width:1px;background:var(--border);margin:4px 0"></div>
+        <div class="s-maint-stat"><div class="s-maint-badge" style="background:rgba(239,68,68,0.12);color:var(--danger)">2</div><span class="s-maint-stat-label">Poor</span></div>
+      </div>
+      <div class="s-maint-tabs">
+        <div class="s-tab s-tab-active">All</div>
+        <div class="s-tab">Tower A</div>
+        <div class="s-tab">Tower B</div>
+        <div class="s-tab">Common Areas</div>
+      </div>
+      <div class="s-scroll">
+        <!-- Card 1 -->
+        <div class="s-maint-card">
+          <div class="s-maint-accent" style="background:var(--warning)"></div>
+          <div class="s-maint-body">
+            <div class="s-maint-cat">Tower A · Lift</div>
+            <div class="s-maint-name">Tower A Lift</div>
+            <div class="s-maint-chips">
+              <span class="s-mchip">👤 Kavitha</span>
+              <span class="s-mchip">📅 Next 2026-05-01</span>
+            </div>
+          </div>
+          <span class="s-maint-status" style="color:var(--warning);background:rgba(245,158,11,0.12)">Fair</span>
+        </div>
+        <!-- Card 2 -->
+        <div class="s-maint-card">
+          <div class="s-maint-accent" style="background:var(--success)"></div>
+          <div class="s-maint-body">
+            <div class="s-maint-cat">Tower A · Lights</div>
+            <div class="s-maint-name">Tower A Corridor Lights</div>
+            <div class="s-maint-chips">
+              <span class="s-mchip">👤 Kavitha</span>
+              <span class="s-mchip">📅 Next 2026-05-22</span>
+            </div>
+          </div>
+          <span class="s-maint-status" style="color:var(--success);background:rgba(16,185,129,0.12)">Good</span>
+        </div>
+        <!-- Card 3 -->
+        <div class="s-maint-card">
+          <div class="s-maint-accent" style="background:var(--danger)"></div>
+          <div class="s-maint-body">
+            <div class="s-maint-cat">Clubhouse · Gym</div>
+            <div class="s-maint-name">Gym Equipment</div>
+            <div class="s-maint-chips">
+              <span class="s-mchip">👤 Srinivas</span>
+              <span class="s-mchip">⚠️ Warranty 35d</span>
+            </div>
+          </div>
+          <span class="s-maint-status" style="color:var(--danger);background:rgba(239,68,68,0.12)">Poor</span>
+        </div>
+        <!-- Card 4 -->
+        <div class="s-maint-card">
+          <div class="s-maint-accent" style="background:var(--success)"></div>
+          <div class="s-maint-body">
+            <div class="s-maint-cat">Clubhouse · Pool</div>
+            <div class="s-maint-name">Swimming Pool</div>
+            <div class="s-maint-chips">
+              <span class="s-mchip">👤 Srinivas</span>
+              <span class="s-mchip">📅 Next 2026-04-28</span>
+            </div>
+          </div>
+          <span class="s-maint-status" style="color:var(--success);background:rgba(16,185,129,0.12)">Good</span>
+        </div>
+        <!-- Card 5 -->
+        <div class="s-maint-card">
+          <div class="s-maint-accent" style="background:var(--danger)"></div>
+          <div class="s-maint-body">
+            <div class="s-maint-cat">Parking · Basement 2</div>
+            <div class="s-maint-name">Basement 2 Lights</div>
+            <div class="s-maint-chips">
+              <span class="s-mchip">👤 Kavitha</span>
+              <span class="s-mchip">📅 Next 2026-04-29</span>
+            </div>
+          </div>
+          <span class="s-maint-status" style="color:var(--danger);background:rgba(239,68,68,0.12)">Poor</span>
+        </div>
+      </div>
+    </div>
+    <div class="home-bar-wrap" style="background:#fff"><div class="home-bar-pill" style="background:rgba(0,0,0,0.15)"></div></div>
+  </div>
+
+  <!-- ISSUES -->
+  <div class="phone light-phone">
+    <div class="phone-island"><div class="phone-island-pill"></div></div>
+    <div class="status-bar light"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content">
+      <div class="s-screen-header">
+        <div class="s-header-back">←</div>
+        <span class="s-header-title">Issues</span>
+        <div class="s-header-new">+ New</div>
+      </div>
+      <div class="s-issue-stats">
+        <div class="s-issue-stat"><div class="s-issue-stat-num" style="color:var(--danger)">4</div><div class="s-issue-stat-label">Open</div></div>
+        <div class="s-issue-stat"><div class="s-issue-stat-num" style="color:var(--warning)">3</div><div class="s-issue-stat-label">In Progress</div></div>
+        <div class="s-issue-stat"><div class="s-issue-stat-num" style="color:var(--success)">2</div><div class="s-issue-stat-label">Resolved</div></div>
+        <div class="s-issue-stat"><div class="s-issue-stat-num" style="color:#8b5cf6">1</div><div class="s-issue-stat-label">On Hold</div></div>
+      </div>
+      <div class="s-scroll">
+        <!-- Issue 1 -->
+        <div class="s-issue-card">
+          <div class="s-issue-accent" style="background:var(--warning)"></div>
+          <div class="s-issue-body">
+            <span class="s-ticket-id">TT-001</span>
+            <div class="s-issue-desc">Lift stuck between 5th and 6th floor for 20 mins. Passengers evacuated.</div>
+            <div class="s-issue-meta">
+              <span class="s-priority" style="color:var(--danger);background:rgba(239,68,68,0.1)">High</span>
+              <span style="font-size:8px;color:var(--warning);background:rgba(245,158,11,0.1);border-radius:99px;padding:2px 6px;font-weight:700">In Progress</span>
+              <span style="font-size:8px;color:var(--text-3)">📍 Tower A</span>
+            </div>
+          </div>
+        </div>
+        <!-- Issue 2 -->
+        <div class="s-issue-card">
+          <div class="s-issue-accent" style="background:var(--danger)"></div>
+          <div class="s-issue-body">
+            <span class="s-ticket-id">TT-002</span>
+            <div class="s-issue-desc">Water leakage near parking spot B1-23. Floor wet and slippery — safety hazard.</div>
+            <div class="s-issue-meta">
+              <span class="s-priority" style="color:var(--danger);background:rgba(239,68,68,0.1)">High</span>
+              <span style="font-size:8px;color:var(--danger);background:rgba(239,68,68,0.1);border-radius:99px;padding:2px 6px;font-weight:700">Open</span>
+              <span style="font-size:8px;color:var(--text-3)">📍 Parking</span>
+            </div>
+          </div>
+        </div>
+        <!-- Issue 3 -->
+        <div class="s-issue-card">
+          <div class="s-issue-accent" style="background:var(--warning)"></div>
+          <div class="s-issue-body">
+            <span class="s-ticket-id">TT-003</span>
+            <div class="s-issue-desc">Treadmill #2 in gym not working. Belt seems to have snapped. Please repair.</div>
+            <div class="s-issue-meta">
+              <span class="s-priority" style="color:var(--warning);background:rgba(245,158,11,0.1)">Medium</span>
+              <span style="font-size:8px;color:var(--warning);background:rgba(245,158,11,0.1);border-radius:99px;padding:2px 6px;font-weight:700">In Progress</span>
+              <span style="font-size:8px;color:var(--text-3)">📍 Clubhouse</span>
+            </div>
+          </div>
+        </div>
+        <!-- Issue 4 -->
+        <div class="s-issue-card">
+          <div class="s-issue-accent" style="background:var(--danger)"></div>
+          <div class="s-issue-body">
+            <span class="s-ticket-id">TT-004</span>
+            <div class="s-issue-desc">Loud music and noise from flat B-504 after 11 PM. Happening for 3 days.</div>
+            <div class="s-issue-meta">
+              <span class="s-priority" style="color:var(--warning);background:rgba(245,158,11,0.1)">Medium</span>
+              <span style="font-size:8px;color:var(--danger);background:rgba(239,68,68,0.1);border-radius:99px;padding:2px 6px;font-weight:700">Open</span>
+              <span style="font-size:8px;color:var(--text-3)">📍 Tower B</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="s-bottom-nav">
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">🏠</div><span class="s-nav-label inactive">Home</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap active">📋</div><span class="s-nav-label active">Issues</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">📅</div><span class="s-nav-label inactive">Book</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">📊</div><span class="s-nav-label inactive">Polls</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">👥</div><span class="s-nav-label inactive">Team</span></div>
+    </div>
+    <div class="home-bar-wrap" style="background:#fff"><div class="home-bar-pill" style="background:rgba(0,0,0,0.15)"></div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PAGE 3: Booking + Polls                               -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="page">
+  <span class="page-label">Booking · Polls</span>
+
+  <!-- BOOKING -->
+  <div class="phone light-phone">
+    <div class="phone-island"><div class="phone-island-pill"></div></div>
+    <div class="status-bar light"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content">
+      <div class="s-screen-header">
+        <div class="s-header-back">←</div>
+        <span class="s-header-title">Slot Booking</span>
+        <div class="s-header-info">ⓘ</div>
+      </div>
+      <div class="s-scroll">
+        <div style="font-size:8px;font-weight:800;color:var(--text-3);padding:8px 10px 5px;text-transform:uppercase;letter-spacing:0.5px">Facilities</div>
+        <div class="s-book-fac">
+          <div class="s-book-thumb" style="background:#1B3A6B">🏸</div>
+          <div class="s-book-info"><div class="s-book-name">Badminton Court 1</div><div class="s-book-meta">Max 60 min · Free</div></div>
+        </div>
+        <div class="s-book-fac">
+          <div class="s-book-thumb" style="background:#1B3A6B">🏸</div>
+          <div class="s-book-info"><div class="s-book-name">Badminton Court 2</div><div class="s-book-meta">Max 60 min · Free</div></div>
+        </div>
+        <div class="s-book-fac">
+          <div class="s-book-thumb" style="background:#1a5c3a">🌿</div>
+          <div class="s-book-info"><div class="s-book-name">Lawn Area</div><div class="s-book-meta">Max 180 min · ₹500 for events</div></div>
+        </div>
+        <div class="s-book-fac">
+          <div class="s-book-thumb" style="background:#6b3a1a">🏛️</div>
+          <div class="s-book-info"><div class="s-book-name">Banquet Hall</div><div class="s-book-meta">Max 360 min · ₹2000/day</div></div>
+        </div>
+        <div class="s-book-fac">
+          <div class="s-book-thumb" style="background:#1a4a5c">🪑</div>
+          <div class="s-book-info"><div class="s-book-name">Club House Room</div><div class="s-book-meta">Max 120 min · Free</div></div>
+        </div>
+        <div style="font-size:8px;font-weight:800;color:var(--text-3);padding:10px 10px 5px;text-transform:uppercase;letter-spacing:0.5px">My Bookings</div>
+        <div style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;margin:0 8px 6px;padding:9px 10px;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+          <span style="font-size:18px">🏸</span>
+          <div style="flex:1"><div style="font-size:10px;font-weight:800;color:var(--text-1)">Badminton Court 1</div><div style="font-size:8px;color:var(--text-3);margin-top:1px">2026-04-27 · 07:00–08:00</div></div>
+          <span style="font-size:8px;font-weight:700;color:var(--success);background:rgba(16,185,129,0.1);border-radius:99px;padding:2px 8px">Confirmed</span>
+        </div>
+      </div>
+    </div>
+    <div class="s-bottom-nav">
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">🏠</div><span class="s-nav-label inactive">Home</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">📋</div><span class="s-nav-label inactive">Issues</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap active">📅</div><span class="s-nav-label active">Book</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">📊</div><span class="s-nav-label inactive">Polls</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">👥</div><span class="s-nav-label inactive">Team</span></div>
+    </div>
+    <div class="home-bar-wrap" style="background:#fff"><div class="home-bar-pill" style="background:rgba(0,0,0,0.15)"></div></div>
+  </div>
+
+  <!-- POLLS -->
+  <div class="phone light-phone">
+    <div class="phone-island"><div class="phone-island-pill"></div></div>
+    <div class="status-bar light"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content">
+      <div class="s-screen-header">
+        <div class="s-header-back">←</div>
+        <span class="s-header-title">Polls</span>
+        <div class="s-header-info">ⓘ</div>
+      </div>
+      <div class="s-scroll">
+        <div style="font-size:8px;font-weight:800;color:var(--text-3);padding:8px 10px 5px;text-transform:uppercase;letter-spacing:0.5px">Active Now</div>
+        <!-- Poll 1 -->
+        <div class="s-poll-card">
+          <div class="s-poll-status">
+            <span class="s-poll-badge" style="color:var(--success);background:rgba(16,185,129,0.12)">● Live</span>
+          </div>
+          <div class="s-poll-title">Election of Tower A Maintenance Task Member</div>
+          <div class="s-poll-meta">📅 Ends 2026-04-30 · 👥 Tower A Residents · 100 votes</div>
+          <div class="s-poll-bar">
+            <div style="flex:52;background:var(--gold)"></div>
+            <div style="flex:31;background:var(--navy);opacity:0.5"></div>
+            <div style="flex:17;background:var(--text-3);opacity:0.4"></div>
+          </div>
+        </div>
+        <!-- Poll 2 -->
+        <div class="s-poll-card">
+          <div class="s-poll-status">
+            <span class="s-poll-badge" style="color:var(--success);background:rgba(16,185,129,0.12)">● Live</span>
+            <span class="s-voted-badge">✓ Voted</span>
+          </div>
+          <div class="s-poll-title">CCTV Expansion — Basement 2</div>
+          <div class="s-poll-meta">📅 Ends 2026-04-29 · 👥 All Residents · 124 votes</div>
+          <div class="s-poll-bar">
+            <div style="flex:89;background:var(--gold)"></div>
+            <div style="flex:23;background:var(--navy);opacity:0.5"></div>
+            <div style="flex:12;background:var(--text-3);opacity:0.4"></div>
+          </div>
+        </div>
+        <div style="font-size:8px;font-weight:800;color:var(--text-3);padding:10px 10px 5px;text-transform:uppercase;letter-spacing:0.5px">Past Polls</div>
+        <!-- Poll 3 - closed -->
+        <div class="s-poll-card">
+          <div class="s-poll-status">
+            <span class="s-poll-badge" style="color:var(--text-3);background:var(--surface-2)">✓ Closed</span>
+            <span class="s-voted-badge">✓ Voted</span>
+          </div>
+          <div class="s-poll-title">Diwali 2026 Celebration Budget</div>
+          <div class="s-poll-meta">📅 Ended 2026-04-25 · 205 votes · 85% participation</div>
+          <div class="s-poll-bar">
+            <div style="flex:45;background:var(--gold);opacity:0.6"></div>
+            <div style="flex:98;background:var(--navy);opacity:0.7"></div>
+            <div style="flex:62;background:var(--text-3);opacity:0.4"></div>
+          </div>
+        </div>
+        <!-- Upcoming -->
+        <div style="font-size:8px;font-weight:800;color:var(--text-3);padding:10px 10px 5px;text-transform:uppercase;letter-spacing:0.5px">Upcoming</div>
+        <div class="s-poll-card">
+          <div class="s-poll-status">
+            <span class="s-poll-badge" style="color:var(--info);background:rgba(59,130,246,0.1)">⏳ Soon</span>
+          </div>
+          <div class="s-poll-title">Pet Policy — Lifts & Common Areas</div>
+          <div class="s-poll-meta">📅 Opens 2026-05-01 · 👥 All Residents</div>
+        </div>
+      </div>
+    </div>
+    <div class="s-bottom-nav">
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">🏠</div><span class="s-nav-label inactive">Home</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">📋</div><span class="s-nav-label inactive">Issues</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">📅</div><span class="s-nav-label inactive">Book</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap active">📊</div><span class="s-nav-label active">Polls</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">👥</div><span class="s-nav-label inactive">Team</span></div>
+    </div>
+    <div class="home-bar-wrap" style="background:#fff"><div class="home-bar-pill" style="background:rgba(0,0,0,0.15)"></div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PAGE 4: Core Members + Policies                       -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="page">
+  <span class="page-label">Core Members · Policies</span>
+
+  <!-- MEMBERS -->
+  <div class="phone light-phone">
+    <div class="phone-island"><div class="phone-island-pill"></div></div>
+    <div class="status-bar light"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content">
+      <div class="s-screen-header">
+        <div class="s-header-back">←</div>
+        <span class="s-header-title">Core Members</span>
+        <div class="s-header-info">ⓘ</div>
+      </div>
+      <div style="display:flex;gap:4px;padding:6px 8px;background:#fff;border-bottom:1px solid var(--border);overflow:hidden">
+        <div class="s-tab s-tab-active">All</div>
+        <div class="s-tab">Admin</div>
+        <div class="s-tab">Finance</div>
+        <div class="s-tab">Cultural</div>
+      </div>
+      <div class="s-scroll">
+        <div class="s-member-card">
+          <div class="s-member-av" style="background:#1B3A6B">SN</div>
+          <div><div class="s-member-name">Suresh Narayanan</div><div class="s-member-role">President</div><span class="s-member-team" style="color:#1B3A6B;background:rgba(27,58,107,0.1)">Administration</span></div>
+        </div>
+        <div class="s-member-card">
+          <div class="s-member-av" style="background:#1B3A6B">PV</div>
+          <div><div class="s-member-name">Priya Venkatesh</div><div class="s-member-role">Secretary</div><span class="s-member-team" style="color:#1B3A6B;background:rgba(27,58,107,0.1)">Administration</span></div>
+        </div>
+        <div class="s-member-card">
+          <div class="s-member-av" style="background:#1a5c3a">RI</div>
+          <div><div class="s-member-name">Ramesh Iyer</div><div class="s-member-role">Treasurer</div><span class="s-member-team" style="color:#1a5c3a;background:rgba(26,92,58,0.1)">Finance</span></div>
+        </div>
+        <div class="s-member-card">
+          <div class="s-member-av" style="background:#6b3a1a">KS</div>
+          <div><div class="s-member-name">Kavitha Subramaniam</div><div class="s-member-role">Tower A Maintenance</div><span class="s-member-team" style="color:#6b3a1a;background:rgba(107,58,26,0.1)">Tower A Maint.</span></div>
+        </div>
+        <div class="s-member-card">
+          <div class="s-member-av" style="background:#3a1a6b">MK</div>
+          <div><div class="s-member-name">Mohan Krishnamurthy</div><div class="s-member-role">Tower B Maintenance</div><span class="s-member-team" style="color:#3a1a6b;background:rgba(58,26,107,0.1)">Tower B Maint.</span></div>
+        </div>
+        <div class="s-member-card">
+          <div class="s-member-av" style="background:#b5451b">AR</div>
+          <div><div class="s-member-name">Anitha Reddy</div><div class="s-member-role">Cultural Committee</div><span class="s-member-team" style="color:#b5451b;background:rgba(181,69,27,0.1)">Cultural</span></div>
+        </div>
+        <div class="s-member-card">
+          <div class="s-member-av" style="background:#1a4a5c">SR</div>
+          <div><div class="s-member-name">Srinivas Rao</div><div class="s-member-role">Clubhouse & Common Areas</div><span class="s-member-team" style="color:#1a4a5c;background:rgba(26,74,92,0.1)">Common Areas</span></div>
+        </div>
+        <div class="s-member-card">
+          <div class="s-member-av" style="background:#4a1a1a">DM</div>
+          <div><div class="s-member-name">Deepa Murthy</div><div class="s-member-role">Security Coordinator</div><span class="s-member-team" style="color:#4a1a1a;background:rgba(74,26,26,0.1)">Security</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="s-bottom-nav">
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">🏠</div><span class="s-nav-label inactive">Home</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">📋</div><span class="s-nav-label inactive">Issues</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">📅</div><span class="s-nav-label inactive">Book</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap">📊</div><span class="s-nav-label inactive">Polls</span></div>
+      <div class="s-nav-item"><div class="s-nav-icon-wrap active">👥</div><span class="s-nav-label active">Team</span></div>
+    </div>
+    <div class="home-bar-wrap" style="background:#fff"><div class="home-bar-pill" style="background:rgba(0,0,0,0.15)"></div></div>
+  </div>
+
+  <!-- POLICIES -->
+  <div class="phone light-phone">
+    <div class="phone-island"><div class="phone-island-pill"></div></div>
+    <div class="status-bar light"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content">
+      <div class="s-screen-header">
+        <div class="s-header-back">←</div>
+        <span class="s-header-title">Policies & Rules</span>
+        <div class="s-header-info">ⓘ</div>
+      </div>
+      <div class="s-scroll">
+        <div class="s-pol-banner">
+          <div class="s-pol-banner-title">Community Guidelines</div>
+          <div class="s-pol-banner-sub">Rules that help maintain a safe, peaceful and harmonious community for everyone at Twin Towers.</div>
+        </div>
+        <div class="s-pol-card">
+          <div class="s-pol-icon" style="background:#1B3A6B">🏊</div>
+          <div><div class="s-pol-name">Swimming Pool</div><div class="s-pol-count">8 rules · Tap to read</div></div>
+        </div>
+        <div class="s-pol-card">
+          <div class="s-pol-icon" style="background:#1a5c3a">🏛️</div>
+          <div><div class="s-pol-name">Clubhouse</div><div class="s-pol-count">8 rules · Tap to read</div></div>
+        </div>
+        <div class="s-pol-card">
+          <div class="s-pol-icon" style="background:#6b3a1a">🅿️</div>
+          <div><div class="s-pol-name">Parking</div><div class="s-pol-count">8 rules · Tap to read</div></div>
+        </div>
+        <div class="s-pol-card">
+          <div class="s-pol-icon" style="background:#3a1a6b">🌳</div>
+          <div><div class="s-pol-name">Common Areas</div><div class="s-pol-count">8 rules · Tap to read</div></div>
+        </div>
+        <div class="s-pol-card">
+          <div class="s-pol-icon" style="background:#4a1a1a">🔇</div>
+          <div><div class="s-pol-name">Noise & Nuisance</div><div class="s-pol-count">6 rules · Tap to read</div></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;background:#fff;border:1.5px solid var(--border);border-radius:12px;margin:0 8px;padding:10px;font-size:9px;font-weight:700;color:var(--navy)">
+          📄 Download Full Community By-Laws
+        </div>
+        <div style="height:8px"></div>
+      </div>
+    </div>
+    <div class="home-bar-wrap" style="background:#fff"><div class="home-bar-pill" style="background:rgba(0,0,0,0.15)"></div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PAGE 5: Notifications + Cultural                      -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="page">
+  <span class="page-label">Notifications · Cultural</span>
+
+  <!-- NOTIFICATIONS -->
+  <div class="phone light-phone">
+    <div class="phone-island"><div class="phone-island-pill"></div></div>
+    <div class="status-bar light"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content">
+      <div class="s-screen-header">
+        <div class="s-header-back">←</div>
+        <div style="flex:1"><div style="font-size:12px;font-weight:800;color:var(--text-1)">Notifications</div><div style="font-size:8px;color:var(--text-3)">2 unread</div></div>
+        <div style="font-size:8px;font-weight:800;color:var(--gold)">Mark all read</div>
+      </div>
+      <div class="s-scroll">
+        <div style="font-size:8px;font-weight:800;color:var(--text-3);padding:6px 10px 4px;text-transform:uppercase;letter-spacing:0.5px">New</div>
+        <div class="s-notif-card unread">
+          <div class="s-notif-icon" style="background:rgba(239,68,68,0.1)">📋</div>
+          <div style="flex:1"><div class="s-notif-title">Your ticket TT-003 updated</div><div class="s-notif-msg">Srinivas Rao: 'Warranty claim raised with vendor.'</div><div class="s-notif-time">2026-04-24 10:05</div></div>
+          <div style="width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;align-self:center"></div>
+        </div>
+        <div class="s-notif-card unread">
+          <div class="s-notif-icon" style="background:rgba(59,130,246,0.1)">🔧</div>
+          <div style="flex:1"><div class="s-notif-title">Maintenance Alert: Tower A Lift</div><div class="s-notif-msg">Tower A Lift status changed from Good to Fair.</div><div class="s-notif-time">2026-04-18 14:30</div></div>
+          <div style="width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;align-self:center"></div>
+        </div>
+        <div style="font-size:8px;font-weight:800;color:var(--text-3);padding:8px 10px 4px;text-transform:uppercase;letter-spacing:0.5px">Earlier</div>
+        <div class="s-notif-card">
+          <div class="s-notif-icon" style="background:rgba(16,185,129,0.1)">📅</div>
+          <div style="flex:1"><div class="s-notif-title" style="color:var(--text-2);font-weight:600">Booking Confirmed</div><div class="s-notif-msg">Badminton Court 1 — Apr 27, 7:00–8:00 AM.</div><div class="s-notif-time">2026-04-25 20:10</div></div>
+        </div>
+        <div class="s-notif-card">
+          <div class="s-notif-icon" style="background:rgba(27,45,91,0.08)">🗳️</div>
+          <div style="flex:1"><div class="s-notif-title" style="color:var(--text-2);font-weight:600">New Poll: CCTV Expansion</div><div class="s-notif-msg">A new community poll has been launched. Vote before Apr 29.</div><div class="s-notif-time">2026-04-22 09:00</div></div>
+        </div>
+        <div class="s-notif-card">
+          <div class="s-notif-icon" style="background:rgba(201,168,76,0.15)">🎉</div>
+          <div style="flex:1"><div class="s-notif-title" style="color:var(--text-2);font-weight:600">New Event: Community Meetup</div><div class="s-notif-msg">Monthly RWA meetup on May 4 at 11 AM in Banquet Hall.</div><div class="s-notif-time">2026-04-21 11:00</div></div>
+        </div>
+        <div class="s-notif-card">
+          <div class="s-notif-icon" style="background:rgba(201,168,76,0.15)">🗳️</div>
+          <div style="flex:1"><div class="s-notif-title" style="color:var(--text-2);font-weight:600">Poll Closed: Diwali Budget</div><div class="s-notif-msg">Winning option: ₹75k–1L. See results.</div><div class="s-notif-time">2026-04-25 23:59</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="home-bar-wrap" style="background:#fff"><div class="home-bar-pill" style="background:rgba(0,0,0,0.15)"></div></div>
+  </div>
+
+  <!-- CULTURAL -->
+  <div class="phone light-phone">
+    <div class="phone-island"><div class="phone-island-pill"></div></div>
+    <div class="status-bar light"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+    <div class="screen-content">
+      <div class="s-screen-header">
+        <div class="s-header-back">←</div>
+        <span class="s-header-title">Cultural</span>
+        <div class="s-header-info">ⓘ</div>
+      </div>
+      <!-- Tab bar -->
+      <div style="display:flex;background:#fff;border-bottom:1px solid var(--border)">
+        <div style="flex:1;padding:9px 4px;font-size:9px;font-weight:800;color:var(--navy);text-align:center;border-bottom:2px solid var(--navy)">Events</div>
+        <div style="flex:1;padding:9px 4px;font-size:9px;font-weight:700;color:var(--text-3);text-align:center;border-bottom:2px solid transparent">Proposals</div>
+        <div style="flex:1;padding:9px 4px;font-size:9px;font-weight:700;color:var(--text-3);text-align:center;border-bottom:2px solid transparent">Gallery</div>
+      </div>
+      <div class="s-scroll">
+        <!-- Event 1 -->
+        <div style="display:flex;gap:10px;background:#fff;border-radius:12px;margin:0 8px 6px;padding:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05);align-items:flex-start">
+          <div style="background:var(--navy);border-radius:10px;padding:5px 8px;text-align:center;min-width:38px;flex-shrink:0">
+            <div style="font-size:7px;font-weight:800;color:var(--gold);letter-spacing:1px">AUG</div>
+            <div style="font-size:16px;font-weight:800;color:#fff;line-height:1.1">27</div>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:10px;font-weight:800;color:var(--text-1);margin-bottom:3px">Ganesh Chaturthi Celebration</div>
+            <div style="font-size:8px;color:var(--text-3);margin-bottom:3px">⏰ 6:00 PM · 📍 Club House Lawn</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:8px;color:var(--text-2)">By Anitha · 87 registered</span>
+              <span style="font-size:7px;font-weight:700;color:var(--success);background:rgba(16,185,129,0.1);border-radius:99px;padding:2px 6px">upcoming</span>
+            </div>
+          </div>
+        </div>
+        <!-- Event 2 -->
+        <div style="display:flex;gap:10px;background:#fff;border-radius:12px;margin:0 8px 6px;padding:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05);align-items:flex-start">
+          <div style="background:var(--navy);border-radius:10px;padding:5px 8px;text-align:center;min-width:38px;flex-shrink:0">
+            <div style="font-size:7px;font-weight:800;color:var(--gold);letter-spacing:1px">AUG</div>
+            <div style="font-size:16px;font-weight:800;color:#fff;line-height:1.1">15</div>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:10px;font-weight:800;color:var(--text-1);margin-bottom:3px">Independence Day Flag Hoisting</div>
+            <div style="font-size:8px;color:var(--text-3);margin-bottom:3px">⏰ 8:00 AM · 📍 Main Entrance</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:8px;color:var(--text-2)">By Suresh · 120 registered</span>
+              <span style="font-size:7px;font-weight:700;color:var(--success);background:rgba(16,185,129,0.1);border-radius:99px;padding:2px 6px">upcoming</span>
+            </div>
+          </div>
+        </div>
+        <!-- Event 3 -->
+        <div style="display:flex;gap:10px;background:#fff;border-radius:12px;margin:0 8px 6px;padding:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05);align-items:flex-start">
+          <div style="background:var(--navy);border-radius:10px;padding:5px 8px;text-align:center;min-width:38px;flex-shrink:0">
+            <div style="font-size:7px;font-weight:800;color:var(--gold);letter-spacing:1px">MAY</div>
+            <div style="font-size:16px;font-weight:800;color:#fff;line-height:1.1">4</div>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:10px;font-weight:800;color:var(--text-1);margin-bottom:3px">Monthly Community Meetup</div>
+            <div style="font-size:8px;color:var(--text-3);margin-bottom:3px">⏰ 11:00 AM · 📍 Banquet Hall</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:8px;color:var(--text-2)">By Priya · 45 registered</span>
+              <span style="font-size:7px;font-weight:700;color:var(--success);background:rgba(16,185,129,0.1);border-radius:99px;padding:2px 6px">upcoming</span>
+            </div>
+          </div>
+        </div>
+        <!-- Event 4 -->
+        <div style="display:flex;gap:10px;background:#fff;border-radius:12px;margin:0 8px 6px;padding:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05);align-items:flex-start">
+          <div style="background:var(--navy);border-radius:10px;padding:5px 8px;text-align:center;min-width:38px;flex-shrink:0">
+            <div style="font-size:7px;font-weight:800;color:var(--gold);letter-spacing:1px">OCT</div>
+            <div style="font-size:16px;font-weight:800;color:#fff;line-height:1.1">20</div>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:10px;font-weight:800;color:var(--text-1);margin-bottom:3px">Diwali Night</div>
+            <div style="font-size:8px;color:var(--text-3);margin-bottom:3px">⏰ 7:00 PM · 📍 Club House Lawn</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:8px;color:var(--text-2)">By Anitha · Planning</span>
+              <span style="font-size:7px;font-weight:700;color:var(--warning);background:rgba(245,158,11,0.1);border-radius:99px;padding:2px 6px">planning</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="home-bar-wrap" style="background:#fff"><div class="home-bar-pill" style="background:rgba(0,0,0,0.15)"></div></div>
+  </div>
+</div>
+
+<!-- Auto-print after fonts load -->
+<script>
+  document.fonts.ready.then(function() {
+    setTimeout(function() {
+      window.print();
+    }, 500);
+  });
+</script>
+</body>
+</html>

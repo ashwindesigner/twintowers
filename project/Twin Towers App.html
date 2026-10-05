@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Twin Towers — Community App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Design Tokens ─────────────────────────────── */
+    :root {
+      --gold:        #C9A84C;
+      --gold-soft:   #F7EDD3;
+      --gold-mid:    #E8C97A;
+      --navy:        #1B2D5B;
+      --navy-soft:   #EEF1F8;
+      --bg:          #F7F6F3;
+      --surface:     #FFFFFF;
+      --surface-2:   #F2F1EE;
+      --text-1:      #0D0C14;
+      --text-2:      #58576A;
+      --text-3:      #A09FB0;
+      --border:      rgba(0,0,0,0.07);
+      --success:     #10B981;
+      --success-bg:  #ECFDF5;
+      --warning:     #F59E0B;
+      --warning-bg:  #FFFBEB;
+      --danger:      #EF4444;
+      --danger-bg:   #FEF2F2;
+      --info:        #3B82F6;
+      --info-bg:     #EFF6FF;
+      --sh-xs:  0 1px 2px rgba(0,0,0,0.04);
+      --sh-sm:  0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
+      --sh-md:  0 2px 8px rgba(0,0,0,0.04), 0 16px 40px rgba(0,0,0,0.08);
+      --sh-lg:  0 4px 16px rgba(0,0,0,0.06), 0 24px 56px rgba(0,0,0,0.12);
+      --r-sm:   10px;
+      --r-md:   16px;
+      --r-lg:   20px;
+      --r-xl:   28px;
+      --r-full: 999px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%; width: 100%;
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+      background: #1B2D5B;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Phone Shell ───────────────────────────────── */
+    .phone-shell {
+      width: 393px;
+      height: 852px;
+      max-height: 98vh;
+      background: var(--bg);
+      border-radius: 52px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.08),
+        0 0 0 10px #0a1628,
+        0 0 0 12px #2a3d6a,
+        var(--sh-lg);
+    }
+
+    /* ── Status Bar ────────────────────────────────── */
+    .status-bar {
+      padding: 16px 28px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      transition: background 0.3s, color 0.3s;
+      position: relative;
+      z-index: 50;
+    }
+    .status-bar.dark { background: var(--navy); }
+    .status-bar.light { background: var(--surface); }
+    .status-bar.transparent { background: transparent; }
+    .status-bar.dark .status-time,
+    .status-bar.dark .status-icons { color: rgba(255,255,255,0.9); }
+    .status-bar.light .status-time,
+    .status-bar.light .status-icons { color: var(--text-1); }
+    .status-bar.transparent .status-time,
+    .status-bar.transparent .status-icons { color: rgba(255,255,255,0.9); }
+
+    .status-time { font-size: 13px; font-weight: 700; letter-spacing: -0.2px; }
+    .status-icons { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; }
+
+    /* Dynamic Island */
+    .dynamic-island {
+      position: absolute;
+      top: 12px; left: 50%;
+      transform: translateX(-50%);
+      width: 118px; height: 34px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 100;
+    }
+
+    /* ── App Area ──────────────────────────────────── */
+    #app-root {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      background: var(--bg);
+    }
+
+    /* ── Home Indicator ────────────────────────────── */
+    .home-indicator {
+      padding: 8px 0 12px;
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+      background: var(--surface);
+    }
+    .home-bar {
+      width: 120px; height: 5px;
+      background: rgba(0,0,0,0.15);
+      border-radius: var(--r-full);
+    }
+
+    /* ── Scrollbars ────────────────────────────────── */
+    ::-webkit-scrollbar { width: 0; height: 0; }
+
+    /* ── Global Animations ─────────────────────────── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    /* ── Global Input/Button Reset ─────────────────── */
+    input, select, textarea, button, a {
+      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button { cursor: pointer; }
+    a { text-decoration: none; }
+
+    /* ── Screen Transition ─────────────────────────── */
+    .screen-enter {
+      animation: fadeUp 0.22s cubic-bezier(0.34, 1.1, 0.64, 1) both;
+    }
+
+    /* ── Responsive ────────────────────────────────── */
+    @media (max-width: 440px) {
+      body { background: var(--bg); }
+      .phone-shell {
+        width: 100%; height: 100%;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .dynamic-island { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-shell">
+    <div class="dynamic-island"></div>
+
+    <!-- Status bar — React will toggle .dark / .light -->
+    <div class="status-bar dark" id="status-bar">
+      <div class="status-time" id="status-time">9:41</div>
+      <div class="status-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5C10.2 2.5 12.2 3.4 13.6 4.9L15 3.5C13.2 1.6 10.7 0.5 8 0.5C5.3 0.5 2.8 1.6 1 3.5L2.4 4.9C3.8 3.4 5.8 2.5 8 2.5Z"/><path d="M8 5.5C9.4 5.5 10.7 6.1 11.6 7L13 5.6C11.7 4.3 10 3.5 8 3.5C6 3.5 4.3 4.3 3 5.6L4.4 7C5.3 6.1 6.6 5.5 8 5.5Z"/><circle cx="8" cy="10" r="1.5"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="currentColor"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35" fill="none"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="currentColor" fill-opacity="0.4"/></svg>
+      </div>
+    </div>
+
+    <div id="app-root"></div>
+
+    <div class="home-indicator" id="home-indicator">
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script src="data.js"></script>
+  <script type="text/babel" src="shared-components.jsx"></script>
+  <script type="text/babel" src="screen-login.jsx"></script>
+  <script type="text/babel" src="screen-dashboard.jsx"></script>
+  <script type="text/babel" src="screen-maintenance.jsx"></script>
+  <script type="text/babel" src="screen-issues.jsx"></script>
+  <script type="text/babel" src="screen-cultural.jsx"></script>
+  <script type="text/babel" src="screen-booking.jsx"></script>
+  <script type="text/babel" src="screen-policies.jsx"></script>
+  <script type="text/babel" src="screen-polls.jsx"></script>
+  <script type="text/babel" src="screen-members.jsx"></script>
+  <script type="text/babel" src="screen-notifications.jsx"></script>
+  <script type="text/babel" src="app-shell.jsx"></script>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const h = now.getHours() % 12 || 12;
+      const m = String(now.getMinutes()).padStart(2,"0");
+      const el = document.getElementById("status-time");
+      if (el) el.textContent = `${h}:${m}`;
+    }
+    updateClock();
+    setInterval(updateClock, 30000);
+
+    // Status bar theme switcher — called by React
+    window.setStatusTheme = (theme) => {
+      const bar = document.getElementById("status-bar");
+      const hi = document.getElementById("home-indicator");
+      if (!bar) return;
+      bar.className = "status-bar " + theme;
+      if (hi) hi.style.background = (theme === "dark" || theme === "transparent") ? "var(--navy)" : "var(--surface)";
+    };
+  </script>
+</body>
+</html>
