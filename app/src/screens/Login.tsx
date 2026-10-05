@@ -5,7 +5,7 @@ import type { Tower } from "../lib/types";
 import { ErrorText, TwinTowersLogo, useToast, type Styles } from "../components/shared";
 
 type Step = "landing" | "email" | "otp" | "profile";
-const RESEND_SECONDS = 30;
+const RESEND_SECONDS = 60;
 
 export default function ScreenLogin({ initialStep = "landing" }: { initialStep?: Step }) {
   const { profile, saveProfile } = useStore();
