@@ -3,9 +3,11 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase } from "./supabase";
 import * as api from "./api";
 import type { Booking, CommunityData, Issue, Priority, Profile, Tower } from "./types";
+import { createDemoData, DEMO_PROFILE } from "./demoData";
 
 interface Store {
   session: Session | null;
+  demo: boolean;
   profile: Profile | null;
   data: CommunityData | null;
   /** True until the initial session check (and data load, when signed in) completes. */
@@ -14,6 +16,7 @@ interface Store {
   /** Bumps each time live updates refresh the data; screens with their own fetches watch it. */
   liveVersion: number;
   reload: () => Promise<void>;
+  startDemo: () => void;
   signOut: () => Promise<void>;
   saveProfile: (patch: { name: string; flat: string; tower: Tower }) => Promise<void>;
   createIssue: (form: { category: string; area: string; priority: Priority; description: string }) => Promise<Issue>;
@@ -28,6 +31,7 @@ const StoreContext = createContext<Store | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
+  const [demo, setDemo] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [data, setData] = useState<CommunityData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -60,6 +64,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (demo) return;
     if (userId) {
       setLoading(true);
       load(userId);
@@ -67,7 +72,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setProfile(null);
       setData(null);
     }
-  }, [userId, load]);
+  }, [userId, load, demo]);
 
   // ── Live updates ─────────────────────────────────────────
   // The database broadcasts a "changed" signal on the private `community` topic
@@ -123,26 +128,78 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const store: Store = {
     session,
+    demo,
     profile,
     data,
     loading,
     error,
     liveVersion,
     reload: async () => {
-      if (userId) await load(userId);
+      if (userId && !demo) await load(userId);
+    },
+    startDemo: () => {
+      setDemo(true);
+      setProfile(DEMO_PROFILE);
+      setData(createDemoData());
+      setError(null);
+      setLoading(false);
     },
     signOut: async () => {
+      if (demo) {
+        setDemo(false);
+        setProfile(null);
+        setData(null);
+        return;
+      }
       await supabase.auth.signOut();
     },
     saveProfile: async (patch) => {
+      if (demo) {
+        setProfile((p) => p && { ...p, ...patch });
+        return;
+      }
       setProfile(await api.updateProfile(requireProfile().id, patch));
     },
     createIssue: async (form) => {
+      if (demo) {
+        const now = new Date().toISOString().slice(0, 16).replace("T", " ");
+        const issue: Issue = {
+          id: `DEMO-${Date.now()}`,
+          category: form.category,
+          subcategory: form.category,
+          priority: form.priority,
+          status: "Open",
+          raisedById: profile?.id ?? null,
+          raisedBy: profile?.name ?? "Demo Resident",
+          flat: profile?.flat ?? "A-302",
+          assignedTo: "Unassigned",
+          area: form.area,
+          created: now,
+          updated: now,
+          description: form.description,
+          sla: null,
+          comments: [],
+        };
+        setData((d) => d && { ...d, issues: [issue, ...d.issues] });
+        return issue;
+      }
       const issue = await api.createIssue(requireProfile(), form);
       setData((d) => d && { ...d, issues: [issue, ...d.issues] });
       return issue;
     },
     addComment: async (issueId, text) => {
+      if (demo) {
+        const comment = {
+          by: profile?.name ?? "Demo Resident",
+          time: new Date().toISOString().slice(0, 16).replace("T", " "),
+          text,
+        };
+        setData((d) => d && {
+          ...d,
+          issues: d.issues.map((i) => (i.id === issueId ? { ...i, comments: [...i.comments, comment] } : i)),
+        });
+        return;
+      }
       const c = await api.addComment(requireProfile(), issueId, text);
       setData((d) => d && {
         ...d,
@@ -153,6 +210,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const ev = data?.events.find((e) => e.id === eventId);
       if (!ev) return;
       const register = !ev.registeredByMe;
+      if (demo) {
+        setData((d) => d && {
+          ...d,
+          events: d.events.map((e) =>
+            e.id === eventId
+              ? { ...e, registeredByMe: register, registered: e.registered + (register ? 1 : -1) }
+              : e
+          ),
+        });
+        return;
+      }
       await api.setEventRegistration(requireProfile().id, eventId, register);
       setData((d) => d && {
         ...d,
@@ -164,6 +232,24 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
     },
     bookSlot: async (facility, date, start, end) => {
+      if (demo) {
+        const booking: Booking = {
+          id: `DEMO-BK-${Date.now()}`,
+          facilityId: facility.id,
+          facility: facility.name,
+          date,
+          startTime: start,
+          endTime: end,
+          status: "confirmed",
+        };
+        setData((d) => d && {
+          ...d,
+          myBookings: [...d.myBookings, booking].sort((a, b) =>
+            (a.date + a.startTime).localeCompare(b.date + b.startTime)
+          ),
+        });
+        return booking;
+      }
       const booking = await api.bookSlot(requireProfile(), facility, date, start, end);
       setData((d) => d && {
         ...d,
@@ -179,6 +265,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       return booking;
     },
     castVote: async (pollId, optionIdx) => {
+      if (demo) {
+        setData((d) => d && {
+          ...d,
+          polls: d.polls.map((p) => {
+            if (p.id !== pollId || p.status !== "active" || p.userVoted !== null) return p;
+            const votes = [...p.votes];
+            votes[optionIdx]++;
+            return { ...p, votes, userVoted: optionIdx };
+          }),
+        });
+        return;
+      }
       await api.castVote(requireProfile().id, pollId, optionIdx);
       setData((d) => d && {
         ...d,
@@ -196,6 +294,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         ...d,
         notifications: d.notifications.map((n) => (ids.includes(n.id) ? { ...n, read: true } : n)),
       });
+      if (demo) return;
       await api.markNotificationsRead(requireProfile().id, ids);
     },
   };

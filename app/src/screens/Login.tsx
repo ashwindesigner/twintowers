@@ -7,7 +7,7 @@ import { ErrorText, TwinTowersLogo, useToast, type Styles } from "../components/
 type Step = "landing" | "email" | "otp" | "profile";
 const RESEND_SECONDS = 60;
 
-export default function ScreenLogin({ initialStep = "landing" }: { initialStep?: Step }) {
+export default function ScreenLogin({ initialStep = "landing", onDemo }: { initialStep?: Step; onDemo?: () => void }) {
   const { profile, saveProfile } = useStore();
   const toast = useToast();
   const [step, setStep] = useState<Step>(initialStep);
@@ -163,6 +163,9 @@ export default function ScreenLogin({ initialStep = "landing" }: { initialStep?:
                 </button>
               );
             })()}
+            {onDemo && (
+              <button className="tap" style={lg.ghostBtn} onClick={onDemo}>Explore Demo</button>
+            )}
             {error && <ErrorText>{error}</ErrorText>}
 
             <div style={lg.divider}>
@@ -178,7 +181,6 @@ export default function ScreenLogin({ initialStep = "landing" }: { initialStep?:
               }}>
               {step === "landing" ? "Continue with Email" : "Continue with Mobile Number"}
             </button>
-
             <div style={lg.footerNote}>
               New resident?{" "}
               <span style={lg.link} role="button" tabIndex={0}

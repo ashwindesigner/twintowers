@@ -14,7 +14,7 @@ const slotEnd = (start: string) => `${String(Number(start.slice(0, 2)) + 1).padS
 
 export default function ScreenBooking({ goBack }: NavProps) {
   const { facilities, myBookings } = useData();
-  const { bookSlot, liveVersion } = useStore();
+  const { bookSlot, liveVersion, demo } = useStore();
   const today = isoDate();
   const [facility, setFacility] = useState<Facility | null>(null);
   const [selDate, setSelDate] = useState(today);
@@ -34,6 +34,13 @@ export default function ScreenBooking({ goBack }: NavProps) {
 
   const loadTaken = (f: Facility, background = false) => {
     if (!background) setTaken(null);
+    if (demo) {
+      setError(null);
+      setTaken(new Set(myBookings
+        .filter((booking) => booking.facilityId === f.id)
+        .map((booking) => `${booking.date} ${booking.startTime}`)));
+      return;
+    }
     fetchTakenSlots(f.id, days[0].ds, days[6].ds).then(setTaken, (e) => {
       if (background) return; // keep the current grid; the next update retries
       setError((e as Error).message);

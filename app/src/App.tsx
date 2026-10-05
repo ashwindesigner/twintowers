@@ -114,7 +114,7 @@ const TABS: { id: ScreenId; label: string; icon: (active: boolean) => ReactNode 
 ];
 
 function SignedInApp() {
-  const { data } = useStore();
+  const { data, demo, signOut } = useStore();
   const [screen, setScreen] = useState<ScreenId>("dashboard");
   const [history, setHistory] = useState<ScreenId[]>([]);
 
@@ -146,6 +146,12 @@ function SignedInApp() {
 
   return (
     <div style={sh.root}>
+      {demo && (
+        <div style={sh.demoBanner}>
+          <span>DEMO PREVIEW · changes reset on exit</span>
+          <button onClick={signOut} style={sh.demoExit}>Exit demo</button>
+        </div>
+      )}
       <div style={sh.screenArea}>
         <div key={screen} className="screen-enter" style={{ height: "100%" }}>
           {screens[screen]}
@@ -179,19 +185,19 @@ function SignedInApp() {
 }
 
 export default function App() {
-  const { session, profile, data, loading, error, reload } = useStore();
+  const { session, demo, profile, data, loading, error, reload, startDemo } = useStore();
   const [bar, setBar] = useState<StatusBarStyle>({ theme: "dark" });
 
   let content: ReactNode;
   if (loading) content = <Splash />;
-  else if (!session) content = <ScreenLogin />;
+  else if (!session && !demo) content = <ScreenLogin onDemo={startDemo} />;
   else if (error || !data || !profile) content = <Splash error={error ?? "Unknown error"} onRetry={reload} />;
   else if (!profile.name || !profile.flat || !profile.tower) content = <ScreenLogin initialStep="profile" />;
   else content = <SignedInApp />;
 
   return (
     <StatusThemeContext.Provider value={setBar}>
-      <PhoneFrame bar={loading || !session ? { theme: "dark" } : bar}>{content}</PhoneFrame>
+      <PhoneFrame bar={loading || (!session && !demo) ? { theme: "dark" } : bar}>{content}</PhoneFrame>
     </StatusThemeContext.Provider>
   );
 }
@@ -202,6 +208,15 @@ const sh: Styles = {
   tabBar: {
     display: "flex", background: "var(--surface)", flexShrink: 0,
     borderTop: "1px solid var(--border)", boxShadow: "0 -4px 20px rgba(0,0,0,0.06)",
+  },
+  demoBanner: {
+    display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8,
+    minHeight: 32, padding: "4px 12px", background: "var(--gold-soft)", color: "var(--navy)",
+    fontSize: 10, fontWeight: 800, letterSpacing: 0.3,
+  },
+  demoExit: {
+    border: "none", background: "transparent", color: "var(--navy)", fontSize: 11,
+    fontWeight: 800, textDecoration: "underline", cursor: "pointer", flexShrink: 0,
   },
   tabItem: {
     flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
